@@ -22,11 +22,7 @@ import * as QuoteSearchPopup from "./quote-search-popup";
 import * as PbCrown from "./pb-crown";
 import * as TestTimer from "./test-timer";
 import * as OutOfFocus from "./out-of-focus";
-import * as AccountButton from "./account-button";
-import * as DB from "./db";
 import * as ThemeColors from "./theme-colors";
-import * as CloudFunctions from "./cloud-functions";
-import * as TestLeaderboards from "./test-leaderboards";
 
 export let notSignedInLastResult = null;
 
@@ -292,18 +288,6 @@ export function punctuateWord(previousWord, currentWord, index, maxindex) {
 export function startTest() {
   if (UI.pageTransition) {
     return false;
-  }
-  if (!Config.dbConfigLoaded) {
-    UpdateConfig.setChangedBeforeDb(true);
-  }
-  try {
-    if (firebase.auth().currentUser != null) {
-      firebase.analytics().logEvent("testStarted");
-    } else {
-      firebase.analytics().logEvent("testStartedNoLogin");
-    }
-  } catch (e) {
-    console.log("Analytics unavailable");
   }
   setActive(true);
   TestStats.resetKeypressTimings();
@@ -1062,9 +1046,6 @@ export function finish(difficultyFailed = false) {
 
   $("#testModesNotice").addClass("hidden");
 
-  $("#result .stats .leaderboards .bottom").text("");
-  $("#result .stats .leaderboards").addClass("hidden");
-
   let mode2 = "";
   if (Config.mode === "time") {
     mode2 = Config.time;
@@ -1188,8 +1169,6 @@ export function finish(difficultyFailed = false) {
 
   if (bailout) afkDetected = false;
 
-  $("#result .stats .tags").addClass("hidden");
-
   let lang = Config.language;
 
   let quoteLength = -1;
@@ -1225,17 +1204,6 @@ export function finish(difficultyFailed = false) {
   ) {
     Notifications.add("Test too short", 0);
   } else {
-    let activeTags = [];
-    let activeTagsIds = [];
-    try {
-      DB.getSnapshot().tags.forEach((tag) => {
-        if (tag.active === true) {
-          activeTags.push(tag);
-          activeTagsIds.push(tag.id);
-        }
-      });
-    } catch (e) {}
-
     let chartData = {
       wpm: TestStats.wpmHistory,
       raw: rawWpmPerSecond,
@@ -1287,7 +1255,6 @@ export function finish(difficultyFailed = false) {
       afkDuration: afkseconds,
       blindMode: Config.blindMode,
       theme: Config.theme,
-      tags: activeTagsIds,
       keySpacing: TestStats.keypressTimings.spacing.array,
       keyDuration: TestStats.keypressTimings.duration.array,
       consistency: consistency,
@@ -1311,308 +1278,6 @@ export function finish(difficultyFailed = false) {
       // incompleteTestSeconds = 0;
       TestStats.resetIncomplete();
     }
-    if (
-      stats.wpm > 0 &&
-      stats.wpm < 350 &&
-      stats.acc > 50 &&
-      stats.acc <= 100
-    ) {
-      if (firebase.auth().currentUser != null) {
-        completedEvent.uid = firebase.auth().currentUser.uid;
-        //check local pb
-        AccountButton.loading(true);
-        let dontShowCrown = false;
-        let pbDiff = 0;
-        DB.getLocalPB(
-          Config.mode,
-          mode2,
-          Config.punctuation,
-          Config.language,
-          Config.difficulty
-        ).then((lpb) => {
-          DB.getUserHighestWpm(
-            Config.mode,
-            mode2,
-            Config.punctuation,
-            Config.language,
-            Config.difficulty
-          ).then((highestwpm) => {
-            PbCrown.hide();
-            $("#result .stats .wpm .crown").attr("aria-label", "");
-            if (lpb < stats.wpm && stats.wpm < highestwpm) {
-              dontShowCrown = true;
-            }
-            if (Config.mode == "quote") dontShowCrown = true;
-            if (lpb < stats.wpm) {
-              //new pb based on local
-              pbDiff = Math.abs(stats.wpm - lpb);
-              if (!dontShowCrown) {
-                PbCrown.show();
-                $("#result .stats .wpm .crown").attr(
-                  "aria-label",
-                  "+" + Misc.roundTo2(pbDiff)
-                );
-              }
-            }
-            if (lpb > 0) {
-              ChartController.result.options.annotation.annotations.push({
-                enabled: false,
-                type: "line",
-                mode: "horizontal",
-                scaleID: "wpm",
-                value: lpb,
-                borderColor: ThemeColors.sub,
-                borderWidth: 1,
-                borderDash: [2, 2],
-                label: {
-                  backgroundColor: ThemeColors.sub,
-                  fontFamily: Config.fontFamily.replace(/_/g, " "),
-                  fontSize: 11,
-                  fontStyle: "normal",
-                  fontColor: ThemeColors.bg,
-                  xPadding: 6,
-                  yPadding: 6,
-                  cornerRadius: 3,
-                  position: "center",
-                  enabled: true,
-                  content: `PB: ${lpb}`,
-                },
-              });
-              if (maxChartVal >= lpb - 15 && maxChartVal <= lpb + 15) {
-                maxChartVal = lpb + 15;
-              }
-              ChartController.result.options.scales.yAxes[0].ticks.max = Math.round(
-                maxChartVal
-              );
-              ChartController.result.options.scales.yAxes[1].ticks.max = Math.round(
-                maxChartVal
-              );
-              ChartController.result.update({ duration: 0 });
-            }
-
-            if (activeTags.length == 0) {
-              $("#result .stats .tags").addClass("hidden");
-            } else {
-              $("#result .stats .tags").removeClass("hidden");
-            }
-            $("#result .stats .tags .bottom").text("");
-            let annotationSide = "left";
-            activeTags.forEach(async (tag) => {
-              let tpb = await DB.getLocalTagPB(
-                tag.id,
-                Config.mode,
-                mode2,
-                Config.punctuation,
-                Config.language,
-                Config.difficulty
-              );
-              $("#result .stats .tags .bottom").append(`
-                <div tagid="${tag.id}" aria-label="PB: ${tpb}" data-balloon-pos="up">${tag.name}<i class="fas fa-crown hidden"></i></div>
-              `);
-              if (Config.mode != "quote") {
-                if (tpb < stats.wpm) {
-                  //new pb for that tag
-                  DB.saveLocalTagPB(
-                    tag.id,
-                    Config.mode,
-                    mode2,
-                    Config.punctuation,
-                    Config.language,
-                    Config.difficulty,
-                    stats.wpm,
-                    stats.acc,
-                    stats.wpmRaw,
-                    consistency
-                  );
-                  $(
-                    `#result .stats .tags .bottom div[tagid="${tag.id}"] .fas`
-                  ).removeClass("hidden");
-                  $(`#result .stats .tags .bottom div[tagid="${tag.id}"]`).attr(
-                    "aria-label",
-                    "+" + Misc.roundTo2(stats.wpm - tpb)
-                  );
-                  // console.log("new pb for tag " + tag.name);
-                } else {
-                  ChartController.result.options.annotation.annotations.push({
-                    enabled: false,
-                    type: "line",
-                    mode: "horizontal",
-                    scaleID: "wpm",
-                    value: tpb,
-                    borderColor: ThemeColors.sub,
-                    borderWidth: 1,
-                    borderDash: [2, 2],
-                    label: {
-                      backgroundColor: ThemeColors.sub,
-                      fontFamily: Config.fontFamily.replace(/_/g, " "),
-                      fontSize: 11,
-                      fontStyle: "normal",
-                      fontColor: ThemeColors.bg,
-                      xPadding: 6,
-                      yPadding: 6,
-                      cornerRadius: 3,
-                      position: annotationSide,
-                      enabled: true,
-                      content: `${tag.name} PB: ${tpb}`,
-                    },
-                  });
-                  if (annotationSide === "left") {
-                    annotationSide = "right";
-                  } else {
-                    annotationSide = "left";
-                  }
-                }
-              }
-            });
-            if (
-              completedEvent.funbox === "none" &&
-              completedEvent.language === "english" &&
-              completedEvent.mode === "time" &&
-              ["15", "60"].includes(String(completedEvent.mode2))
-            ) {
-              $("#result .stats .leaderboards").removeClass("hidden");
-              $("#result .stats .leaderboards .bottom").html(
-                `checking <i class="fas fa-spin fa-fw fa-circle-notch"></i>`
-              );
-            }
-            CloudFunctions.testCompleted({
-              uid: firebase.auth().currentUser.uid,
-              obj: completedEvent,
-            })
-              .then((e) => {
-                AccountButton.loading(false);
-                if (e.data == null) {
-                  Notifications.add(
-                    "Unexpected response from the server: " + e.data,
-                    -1
-                  );
-                  return;
-                }
-                if (e.data.resultCode === -1) {
-                  Notifications.add("Could not save result", -1);
-                } else if (e.data.resultCode === -2) {
-                  Notifications.add(
-                    "Possible bot detected. Result not saved.",
-                    -1
-                  );
-                } else if (e.data.resultCode === -3) {
-                  Notifications.add(
-                    "Could not verify keypress stats. Result not saved.",
-                    -1
-                  );
-                } else if (e.data.resultCode === -4) {
-                  Notifications.add(
-                    "Result data does not make sense. Result not saved.",
-                    -1
-                  );
-                } else if (e.data.resultCode === -5) {
-                  Notifications.add("Test too short. Result not saved.", -1);
-                } else if (e.data.resultCode === -999) {
-                  console.error("internal error: " + e.data.message);
-                  Notifications.add(
-                    "Internal error. Result might not be saved. " +
-                      e.data.message,
-                    -1
-                  );
-                } else if (e.data.resultCode === 1 || e.data.resultCode === 2) {
-                  completedEvent.id = e.data.createdId;
-                  TestLeaderboards.check(completedEvent);
-                  if (e.data.resultCode === 2) {
-                    completedEvent.isPb = true;
-                  }
-                  if (
-                    DB.getSnapshot() !== null &&
-                    DB.getSnapshot().results !== undefined
-                  ) {
-                    DB.getSnapshot().results.unshift(completedEvent);
-                    if (DB.getSnapshot().globalStats.time == undefined) {
-                      DB.getSnapshot().globalStats.time =
-                        testtime +
-                        completedEvent.incompleteTestSeconds -
-                        afkseconds;
-                    } else {
-                      DB.getSnapshot().globalStats.time +=
-                        testtime +
-                        completedEvent.incompleteTestSeconds -
-                        afkseconds;
-                    }
-                    if (DB.getSnapshot().globalStats.started == undefined) {
-                      DB.getSnapshot().globalStats.started =
-                        TestStats.restartCount + 1;
-                    } else {
-                      DB.getSnapshot().globalStats.started +=
-                        TestStats.restartCount + 1;
-                    }
-                    if (DB.getSnapshot().globalStats.completed == undefined) {
-                      DB.getSnapshot().globalStats.completed = 1;
-                    } else {
-                      DB.getSnapshot().globalStats.completed += 1;
-                    }
-                  }
-                  try {
-                    firebase
-                      .analytics()
-                      .logEvent("testCompleted", completedEvent);
-                  } catch (e) {
-                    console.log("Analytics unavailable");
-                  }
-
-                  if (e.data.resultCode === 2) {
-                    //new pb
-                    PbCrown.show();
-                    DB.saveLocalPB(
-                      Config.mode,
-                      mode2,
-                      Config.punctuation,
-                      Config.language,
-                      Config.difficulty,
-                      stats.wpm,
-                      stats.acc,
-                      stats.wpmRaw,
-                      consistency
-                    );
-                  } else if (e.data.resultCode === 1) {
-                    PbCrown.hide();
-                    // if (localPb) {
-                    //   Notifications.add(
-                    //     "Local PB data is out of sync! Refresh the page to resync it or contact Miodec on Discord.",
-                    //     15000
-                    //   );
-                    // }
-                  }
-                }
-              })
-              .catch((e) => {
-                AccountButton.loading(false);
-                console.error(e);
-                Notifications.add("Could not save result. " + e, -1);
-              });
-          });
-        });
-      } else {
-        try {
-          firebase.analytics().logEvent("testCompletedNoLogin", completedEvent);
-        } catch (e) {
-          console.log("Analytics unavailable");
-        }
-        notSignedInLastResult = completedEvent;
-      }
-    } else {
-      Notifications.add("Test invalid", 0);
-      TestStats.setInvalid();
-      try {
-        firebase.analytics().logEvent("testCompletedInvalid", completedEvent);
-      } catch (e) {
-        console.log("Analytics unavailable");
-      }
-    }
-  }
-
-  if (firebase.auth().currentUser != null) {
-    $("#result .loginTip").addClass("hidden");
-  } else {
-    $("#result .stats .leaderboards").addClass("hidden");
-    $("#result .loginTip").removeClass("hidden");
   }
 
   let testType = "";

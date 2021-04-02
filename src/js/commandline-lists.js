@@ -1,4 +1,3 @@
-import * as DB from "./db";
 import * as Misc from "./misc";
 import layouts from "./layouts";
 import * as Notifications from "./notifications";
@@ -12,7 +11,6 @@ import * as PractiseMissed from "./practise-missed";
 import * as TestUI from "./test-ui";
 import * as TestLogic from "./test-logic";
 import * as Funbox from "./funbox";
-import * as TagController from "./tag-controller";
 import * as Commandline from "./commandline";
 import * as CustomText from "./custom-text";
 
@@ -179,66 +177,6 @@ Misc.getFontsList().then((fonts) => {
     },
   });
 });
-
-let commandsTags = {
-  title: "Change tags...",
-  list: [],
-};
-
-export function updateTagCommands() {
-  if (DB.getSnapshot().tags.length > 0) {
-    commandsTags.list = [];
-
-    commandsTags.list.push({
-      id: "clearTags",
-      display: "Clear tags",
-      exec: () => {
-        DB.getSnapshot().tags.forEach((tag) => {
-          tag.active = false;
-        });
-        TestUI.updateModesNotice();
-        TagController.saveActiveToCookie();
-      },
-    });
-
-    DB.getSnapshot().tags.forEach((tag) => {
-      let dis = tag.name;
-
-      if (tag.active === true) {
-        dis = '<i class="fas fa-check-square"></i>' + dis;
-      } else {
-        dis = '<i class="fas fa-square"></i>' + dis;
-      }
-
-      commandsTags.list.push({
-        id: "toggleTag" + tag.id,
-        display: dis,
-        sticky: true,
-        exec: () => {
-          TagController.toggle(tag.id);
-          TestUI.updateModesNotice();
-          let txt = tag.name;
-
-          if (tag.active === true) {
-            txt = '<i class="fas fa-check-square"></i>' + txt;
-          } else {
-            txt = '<i class="fas fa-square"></i>' + txt;
-          }
-          if (Commandline.isSingleListCommandLineActive()) {
-            $(
-              `#commandLine .suggestions .entry[command='toggleTag${tag.id}']`
-            ).html("Change tags > " + txt);
-          } else {
-            $(
-              `#commandLine .suggestions .entry[command='toggleTag${tag.id}']`
-            ).html(txt);
-          }
-        },
-      });
-    });
-    // defaultCommands.list[4].visible = true;
-  }
-}
 
 let commandsRepeatQuotes = {
   title: "Change repeat quotes...",
@@ -408,36 +346,6 @@ let commandsDifficulty = {
       display: "Master",
       exec: () => {
         UpdateConfig.setDifficulty("master");
-      },
-    },
-  ],
-};
-
-export let commandsEnableAds = {
-  title: "Set enable ads...",
-  list: [
-    {
-      id: "setEnableAdsOff",
-      display: "off",
-      exec: () => {
-        UpdateConfig.setEnableAds("off");
-        Notifications.add("Don't forget to refresh the page!", 0);
-      },
-    },
-    {
-      id: "setEnableAdsOn",
-      display: "on",
-      exec: () => {
-        UpdateConfig.setEnableAds("on");
-        Notifications.add("Don't forget to refresh the page!", 0);
-      },
-    },
-    {
-      id: "setEnableMax",
-      display: "Sellout",
-      exec: () => {
-        UpdateConfig.setEnableAds("max");
-        Notifications.add("Don't forget to refresh the page!", 0);
       },
     },
   ],
@@ -1251,17 +1159,6 @@ export let defaultCommands = {
       },
     },
     {
-      visible: false,
-      id: "changeTags",
-      display: "Change tags...",
-      subgroup: true,
-      exec: () => {
-        updateTagCommands();
-        current.push(commandsTags);
-        Commandline.show();
-      },
-    },
-    {
       id: "changeConfidenceMode",
       display: "Change confidence mode...",
       subgroup: true,
@@ -1509,15 +1406,6 @@ export let defaultCommands = {
       },
     },
     {
-      id: "setEnableAds",
-      display: "Set enable ads...",
-      subgroup: true,
-      exec: () => {
-        current.push(commandsEnableAds);
-        Commandline.show();
-      },
-    },
-    {
       id: "toggleCustomTheme",
       display: "Toggle preset/custom theme",
       exec: () => {
@@ -1727,11 +1615,6 @@ export let defaultCommands = {
       exec: () => $("#top #menu .icon-button.view-start").click(),
     },
     {
-      id: "viewLeaderboards",
-      display: "View Leaderboards Page",
-      exec: () => $("#top #menu .icon-button.view-leaderboards").click(),
-    },
-    {
       id: "viewAbout",
       display: "View About Page",
       exec: () => $("#top #menu .icon-button.view-about").click(),
@@ -1740,15 +1623,6 @@ export let defaultCommands = {
       id: "viewSettings",
       display: "View Settings Page",
       exec: () => $("#top #menu .icon-button.view-settings").click(),
-    },
-    {
-      id: "viewAccount",
-      display: "View Account Page",
-      alias: "stats",
-      exec: () =>
-        $("#top #menu .icon-button.view-account").hasClass("hidden")
-          ? $("#top #menu .icon-button.view-login").click()
-          : $("#top #menu .icon-button.view-account").click(),
     },
     {
       id: "toggleFullscreen",

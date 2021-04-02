@@ -1,8 +1,5 @@
 import * as Loader from "./loader";
-import * as CloudFunctions from "./cloud-functions";
 import * as Notifications from "./notifications";
-import * as AccountController from "./account-controller";
-import * as DB from "./db";
 import * as Settings from "./settings";
 
 export let list = {};
@@ -132,95 +129,6 @@ $(document).on("keyup", "#simplePopupWrapper input", (e) => {
   }
 });
 
-list.updateEmail = new SimplePopup(
-  "updateEmail",
-  "text",
-  "Update Email",
-  [
-    {
-      placeholder: "Current email",
-      initVal: "",
-    },
-    {
-      placeholder: "New email",
-      initVal: "",
-    },
-  ],
-  "Don't mess this one up or you won't be able to login!",
-  "Update",
-  (previousEmail, newEmail) => {
-    try {
-      Loader.show();
-      CloudFunctions.updateEmail({
-        uid: firebase.auth().currentUser.uid,
-        previousEmail: previousEmail,
-        newEmail: newEmail,
-      }).then((data) => {
-        Loader.hide();
-        if (data.data.resultCode === 1) {
-          Notifications.add("Email updated", 0);
-          setTimeout(() => {
-            AccountController.signOut();
-          }, 1000);
-        } else if (data.data.resultCode === -1) {
-          Notifications.add("Current email doesn't match", 0);
-        } else {
-          Notifications.add(
-            "Something went wrong: " + JSON.stringify(data.data),
-            -1
-          );
-        }
-      });
-    } catch (e) {
-      Notifications.add("Something went wrong: " + e, -1);
-    }
-  },
-  () => {}
-);
-
-list.clearTagPb = new SimplePopup(
-  "clearTagPb",
-  "text",
-  "Clear Tag PB",
-  [],
-  `Are you sure you want to clear this tags PB?`,
-  "Clear",
-  () => {
-    let tagid = eval("this.parameters[0]");
-    Loader.show();
-    CloudFunctions.clearTagPb({
-      uid: firebase.auth().currentUser.uid,
-      tagid: tagid,
-    })
-      .then((res) => {
-        Loader.hide();
-        if (res.data.resultCode === 1) {
-          let tag = DB.getSnapshot().tags.filter((t) => t.id === tagid)[0];
-          tag.pb = 0;
-          $(
-            `.pageSettings .section.tags .tagsList .tag[id="${tagid}"] .clearPbButton`
-          ).attr("aria-label", "No PB found");
-          Notifications.add("Tag PB cleared.", 0);
-        } else {
-          Notifications.add("Something went wrong: " + res.data.message, -1);
-        }
-      })
-      .catch((e) => {
-        Loader.hide();
-        Notifications.add(
-          "Something went wrong while clearing tag pb " + e,
-          -1
-        );
-      });
-    // console.log(`clearing for ${eval("this.parameters[0]")} ${eval("this.parameters[1]")}`);
-  },
-  () => {
-    eval(
-      "this.text = `Are you sure you want to clear PB for tag ${eval('this.parameters[1]')}?`"
-    );
-  }
-);
-
 list.applyCustomFont = new SimplePopup(
   "applyCustomFont",
   "text",
@@ -231,43 +139,6 @@ list.applyCustomFont = new SimplePopup(
   (fontName) => {
     if (fontName === "") return;
     Settings.groups.fontFamily.setValue(fontName.replace(/\s/g, "_"));
-  },
-  () => {}
-);
-
-list.resetPersonalBests = new SimplePopup(
-  "resetPersonalBests",
-  "text",
-  "Reset Personal Bests",
-  [],
-  "Are you sure you want to reset all your personal bests?",
-  "Reset",
-  () => {
-    try {
-      Loader.show();
-
-      CloudFunctions.resetPersonalBests({
-        uid: firebase.auth().currentUser.uid,
-      }).then((res) => {
-        if (res) {
-          Loader.hide();
-          Notifications.add(
-            "Personal bests removed, refreshing the page...",
-            0
-          );
-          setTimeout(() => {
-            location.reload();
-          }, 1500);
-        } else {
-          Notifications.add(
-            "Something went wrong while removing personal bests...",
-            -1
-          );
-        }
-      });
-    } catch (e) {
-      Notifications.add("Something went wrong: " + e, -1);
-    }
   },
   () => {}
 );

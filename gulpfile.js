@@ -12,14 +12,7 @@ sass.compiler = require("dart-sass");
 
 let eslintConfig = {
   parser: "babel-eslint",
-  globals: [
-    "jQuery",
-    "$",
-    "firebase",
-    "moment",
-    "html2canvas",
-    "ClipboardItem",
-  ],
+  globals: ["jQuery", "$", "moment", "html2canvas", "ClipboardItem"],
   envs: ["es6", "browser", "node"],
   rules: {
     "constructor-super": "error",
@@ -86,8 +79,6 @@ let eslintConfig = {
 //refactored files, which should be es6 modules
 //once all files are moved here, then can we use a bundler to its full potential
 const refactoredSrc = [
-  "./src/js/db.js",
-  "./src/js/cloud-functions.js",
   "./src/js/misc.js",
   "./src/js/layouts.js",
   "./src/js/sound.js",
@@ -95,32 +86,20 @@ const refactoredSrc = [
   "./src/js/chart-controller.js",
   "./src/js/theme-controller.js",
   "./src/js/config.js",
-  "./src/js/tag-controller.js",
   "./src/js/ui.js",
   "./src/js/commandline.js",
   "./src/js/commandline-lists.js",
   "./src/js/commandline.js",
   "./src/js/challenge-controller.js",
-  "./src/js/mini-result-chart.js",
-  "./src/js/account-controller.js",
   "./src/js/simple-popups.js",
   "./src/js/settings.js",
   "./src/js/input-controller.js",
   "./src/js/route-controller.js",
   "./src/js/ready.js",
 
-  "./src/js/account/all-time-stats.js",
-  "./src/js/account/pb-tables.js",
-  "./src/js/account/result-filters.js",
-  "./src/js/account/verification-controller.js",
-  "./src/js/account.js",
-
   "./src/js/elements/monkey.js",
   "./src/js/elements/notifications.js",
-  "./src/js/elements/leaderboards.js",
-  "./src/js/elements/account-button.js",
   "./src/js/elements/loader.js",
-  "./src/js/elements/sign-out-button.js",
 
   "./src/js/popups/custom-text-popup.js",
   "./src/js/popups/quote-search-popup.js",
@@ -129,8 +108,6 @@ const refactoredSrc = [
   "./src/js/popups/custom-word-amount-popup.js",
   "./src/js/popups/custom-test-duration-popup.js",
   "./src/js/popups/word-filter-popup.js",
-  "./src/js/popups/result-tags-popup.js",
-  "./src/js/popups/edit-tags-popup.js",
   "./src/js/popups/custom-theme-popup.js",
   "./src/js/popups/import-settings-popup.js",
   "./src/js/popups/custom-background-filter.js",
@@ -152,7 +129,6 @@ const refactoredSrc = [
   "./src/js/test/live-wpm.js",
   "./src/js/test/caps-warning.js",
   "./src/js/test/live-acc.js",
-  "./src/js/test/test-leaderboards.js",
   "./src/js/test/timer-progress.js",
   "./src/js/test/test-logic.js",
   "./src/js/test/funbox.js",

@@ -1,4 +1,3 @@
-import * as Leaderboards from "./leaderboards";
 import * as ThemeController from "./theme-controller";
 import Config, * as UpdateConfig from "./config";
 import * as Focus from "./focus";
@@ -158,13 +157,6 @@ function trigger(command) {
     }
   });
   if (!subgroup && !input && !sticky) {
-    try {
-      firebase.analytics().logEvent("usedCommandLine", {
-        command: command,
-      });
-    } catch (e) {
-      console.log("Analytics unavailable");
-    }
     hide();
   }
 }
@@ -279,11 +271,7 @@ $(document).ready((e) => {
     //escape
     if (event.keyCode == 27 || (event.keyCode == 9 && Config.swapEscAndTab)) {
       event.preventDefault();
-      if (!$("#leaderboardsWrapper").hasClass("hidden")) {
-        //maybe add more condition for closing other dialogs in the future as well
-        event.preventDefault();
-        Leaderboards.hide();
-      } else if (!$("#commandLineWrapper").hasClass("hidden")) {
+      if (!$("#commandLineWrapper").hasClass("hidden")) {
         if (CommandlineLists.current.length > 1) {
           CommandlineLists.current.pop();
           $("#commandLine").removeClass("allCommands");
@@ -320,13 +308,6 @@ $("#commandInput input").keydown((e) => {
         }
       }
     });
-    try {
-      firebase.analytics().logEvent("usedCommandLine", {
-        command: command,
-      });
-    } catch (e) {
-      console.log("Analytics unavailable");
-    }
     hide();
   }
   return;

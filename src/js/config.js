@@ -1,8 +1,6 @@
-import * as DB from "./db";
 import * as Misc from "./misc";
 import * as Sound from "./sound";
 import * as TestUI from "./test-ui";
-import * as ChartController from "./chart-controller";
 import * as OutOfFocus from "./out-of-focus";
 import * as TimerProgress from "./timer-progress";
 import * as LiveWpm from "./live-wpm";
@@ -19,19 +17,9 @@ import * as CommandlineLists from "./commandline-lists";
 import * as BackgroundFilter from "./custom-background-filter";
 
 export let cookieConfig = null;
-export let dbConfigLoaded = false;
-export let changedBeforeDb = false;
 
 export function setCookieConfig(val) {
   cookieConfig = val;
-}
-
-export function setDbConfigLoaded(val) {
-  dbConfigLoaded = val;
-}
-
-export function setChangedBeforeDb(val) {
-  changedBeforeDb = val;
 }
 
 let loadDone;
@@ -100,13 +88,10 @@ let defaultConfig = {
   paceCaret: "off",
   paceCaretCustomSpeed: 100,
   pageWidth: "100",
-  chartAccuracy: true,
-  chartStyle: "line",
   minWpm: "off",
   minWpmCustomSpeed: 100,
   highlightMode: "letter",
   alwaysShowCPM: false,
-  enableAds: "off",
   hideExtraLetters: false,
   strictSpace: false,
   minAcc: "off",
@@ -131,9 +116,6 @@ let config = {
 };
 
 export async function saveToCookie(noDbCheck = false) {
-  if (!dbConfigLoaded && !noDbCheck) {
-    setChangedBeforeDb(true);
-  }
   // let d = new Date();
   // d.setFullYear(d.getFullYear() + 1);
   // $.cookie("config", JSON.stringify(config), {
@@ -144,7 +126,6 @@ export async function saveToCookie(noDbCheck = false) {
   delete save.resultFilters;
   Misc.setCookie("config", JSON.stringify(save), 365);
   // restartCount = 0;
-  if (!noDbCheck) await DB.saveConfig(save);
 }
 
 //numbers
@@ -338,62 +319,6 @@ export function setBlindMode(blind, nosave) {
   }
   config.blindMode = blind;
   TestUI.updateModesNotice();
-  if (!nosave) saveToCookie();
-}
-
-function updateChartAccuracy() {
-  ChartController.accountHistory.data.datasets[1].hidden = !config.chartAccuracy;
-  ChartController.accountHistory.options.scales.yAxes[1].display =
-    config.chartAccuracy;
-  ChartController.accountHistory.update();
-}
-
-export function updateChartStyle() {
-  if (config.chartStyle == "scatter") {
-    ChartController.accountHistory.data.datasets[0].showLine = false;
-    ChartController.accountHistory.data.datasets[1].showLine = false;
-  } else {
-    ChartController.accountHistory.data.datasets[0].showLine = true;
-    ChartController.accountHistory.data.datasets[1].showLine = true;
-  }
-  ChartController.accountHistory.update();
-}
-
-export function toggleChartAccuracy() {
-  if (config.chartAccuracy) {
-    config.chartAccuracy = false;
-  } else {
-    config.chartAccuracy = true;
-  }
-  updateChartAccuracy();
-  saveToCookie();
-}
-
-export function setChartAccuracy(chartAccuracy, nosave) {
-  if (chartAccuracy == undefined) {
-    chartAccuracy = true;
-  }
-  config.chartAccuracy = chartAccuracy;
-  updateChartAccuracy();
-  if (!nosave) saveToCookie();
-}
-
-export function toggleChartStyle() {
-  if (config.chartStyle == "scatter") {
-    config.chartStyle = "line";
-  } else {
-    config.chartStyle = "scatter";
-  }
-  updateChartStyle();
-  saveToCookie();
-}
-
-export function setChartStyle(chartStyle, nosave) {
-  if (chartStyle == undefined) {
-    chartStyle = "line";
-  }
-  config.chartStyle = chartStyle;
-  updateChartStyle();
   if (!nosave) saveToCookie();
 }
 
@@ -597,14 +522,6 @@ export function setQuickEnd(qe, nosave) {
     qe = false;
   }
   config.quickEnd = qe;
-  if (!nosave) saveToCookie();
-}
-
-export function setEnableAds(val, nosave) {
-  if (val == undefined || val === true || val === false) {
-    val = "off";
-  }
-  config.enableAds = val;
   if (!nosave) saveToCookie();
 }
 
@@ -1100,7 +1017,6 @@ export function setFontFamily(font, nosave) {
     "--font",
     '"' + font.replace(/_/g, " ") + '"'
   );
-  ChartController.setDefaultFontFamily(font);
   if (!nosave) saveToCookie();
 }
 
@@ -1208,13 +1124,6 @@ export function setLanguage(language, nosave) {
     language = "english";
   }
   config.language = language;
-  try {
-    firebase.analytics().logEvent("changedLanguage", {
-      language: language,
-    });
-  } catch (e) {
-    console.log("Analytics unavailable");
-  }
   if (!nosave) saveToCookie();
 }
 
@@ -1452,8 +1361,6 @@ export function apply(configObj) {
     setPaceCaret(configObj.paceCaret, true);
     setPaceCaretCustomSpeed(configObj.paceCaretCustomSpeed, true);
     setPageWidth(configObj.pageWidth, true);
-    setChartAccuracy(configObj.chartAccuracy, true);
-    setChartStyle(configObj.chartStyle, true);
     setMinWpm(configObj.minWpm, true);
     setMinWpmCustomSpeed(configObj.minWpmCustomSpeed, true);
     setMinAcc(configObj.minAcc, true);
@@ -1471,184 +1378,6 @@ export function apply(configObj) {
     setRepeatQuotes(configObj.repeatQuotes, true);
 
     LanguagePicker.setActiveGroup();
-
-    try {
-      setEnableAds(configObj.enableAds, true);
-      let addemo = false;
-      if (
-        firebase.app().options.projectId === "monkey-type-dev-67af4" ||
-        window.location.hostname === "localhost"
-      ) {
-        addemo = true;
-      }
-
-      if (config.enableAds === "max" || config.enableAds === "on") {
-        if (config.enableAds === "max") {
-          window["nitroAds"].createAd("nitropay_ad_left", {
-            refreshLimit: 10,
-            refreshTime: 30,
-            renderVisibleOnly: false,
-            refreshVisibleOnly: true,
-            sizes: [["160", "600"]],
-            report: {
-              enabled: true,
-              wording: "Report Ad",
-              position: "bottom-right",
-            },
-            mediaQuery: "(min-width: 1330px)",
-            demo: addemo,
-          });
-          $("#nitropay_ad_left").removeClass("hidden");
-
-          window["nitroAds"].createAd("nitropay_ad_right", {
-            refreshLimit: 10,
-            refreshTime: 30,
-            renderVisibleOnly: false,
-            refreshVisibleOnly: true,
-            sizes: [["160", "600"]],
-            report: {
-              enabled: true,
-              wording: "Report Ad",
-              position: "bottom-right",
-            },
-            mediaQuery: "(min-width: 1330px)",
-            demo: addemo,
-          });
-          $("#nitropay_ad_right").removeClass("hidden");
-        } else {
-          $("#nitropay_ad_left").remove();
-          $("#nitropay_ad_right").remove();
-        }
-
-        window["nitroAds"].createAd("nitropay_ad_footer", {
-          refreshLimit: 10,
-          refreshTime: 30,
-          renderVisibleOnly: false,
-          refreshVisibleOnly: true,
-          sizes: [["970", "90"]],
-          report: {
-            enabled: true,
-            wording: "Report Ad",
-            position: "bottom-right",
-          },
-          mediaQuery: "(min-width: 1025px)",
-          demo: addemo,
-        });
-        $("#nitropay_ad_footer").removeClass("hidden");
-
-        window["nitroAds"].createAd("nitropay_ad_footer2", {
-          refreshLimit: 10,
-          refreshTime: 30,
-          renderVisibleOnly: false,
-          refreshVisibleOnly: true,
-          sizes: [["728", "90"]],
-          report: {
-            enabled: true,
-            wording: "Report Ad",
-            position: "bottom-right",
-          },
-          mediaQuery: "(min-width: 730px) and (max-width: 1024px)",
-          demo: addemo,
-        });
-        $("#nitropay_ad_footer2").removeClass("hidden");
-
-        window["nitroAds"].createAd("nitropay_ad_footer3", {
-          refreshLimit: 10,
-          refreshTime: 30,
-          renderVisibleOnly: false,
-          refreshVisibleOnly: true,
-          sizes: [["320", "50"]],
-          report: {
-            enabled: true,
-            wording: "Report Ad",
-            position: "bottom-right",
-          },
-          mediaQuery: "(max-width: 730px)",
-          demo: addemo,
-        });
-        $("#nitropay_ad_footer3").removeClass("hidden");
-
-        window["nitroAds"].createAd("nitropay_ad_about", {
-          refreshLimit: 10,
-          refreshTime: 30,
-          renderVisibleOnly: false,
-          refreshVisibleOnly: true,
-          report: {
-            enabled: true,
-            wording: "Report Ad",
-            position: "bottom-right",
-          },
-          demo: addemo,
-        });
-        $("#nitropay_ad_about").removeClass("hidden");
-
-        window["nitroAds"].createAd("nitropay_ad_settings1", {
-          refreshLimit: 10,
-          refreshTime: 30,
-          renderVisibleOnly: false,
-          refreshVisibleOnly: true,
-          report: {
-            enabled: true,
-            wording: "Report Ad",
-            position: "bottom-right",
-          },
-          demo: addemo,
-        });
-        $("#nitropay_ad_settings1").removeClass("hidden");
-
-        window["nitroAds"].createAd("nitropay_ad_settings2", {
-          refreshLimit: 10,
-          refreshTime: 30,
-          renderVisibleOnly: false,
-          refreshVisibleOnly: true,
-          report: {
-            enabled: true,
-            wording: "Report Ad",
-            position: "bottom-right",
-          },
-          demo: addemo,
-        });
-        $("#nitropay_ad_settings2").removeClass("hidden");
-
-        window["nitroAds"].createAd("nitropay_ad_account", {
-          refreshLimit: 10,
-          refreshTime: 30,
-          renderVisibleOnly: false,
-          refreshVisibleOnly: true,
-          report: {
-            enabled: true,
-            wording: "Report Ad",
-            position: "bottom-right",
-          },
-          demo: addemo,
-        });
-        $("#nitropay_ad_account").removeClass("hidden");
-      } else {
-        $(".footerads").remove();
-        $("#nitropay_ad_left").remove();
-        $("#nitropay_ad_right").remove();
-        $("#nitropay_ad_footer").remove();
-        $("#nitropay_ad_footer2").remove();
-        $("#nitropay_ad_footer3").remove();
-        $("#nitropay_ad_settings1").remove();
-        $("#nitropay_ad_settings2").remove();
-        $("#nitropay_ad_account").remove();
-        $("#nitropay_ad_about").remove();
-      }
-    } catch (e) {
-      Notifications.add("Error initialising ads: " + e.message);
-      console.log("error initialising ads " + e.message);
-      $(".footerads").remove();
-      $("#nitropay_ad_left").remove();
-      $("#nitropay_ad_right").remove();
-      $("#nitropay_ad_footer").remove();
-      $("#nitropay_ad_footer2").remove();
-      $("#nitropay_ad_footer3").remove();
-      $("#nitropay_ad_settings1").remove();
-      $("#nitropay_ad_settings2").remove();
-      $("#nitropay_ad_account").remove();
-      $("#nitropay_ad_about").remove();
-    }
   }
   TestUI.updateModesNotice();
 }

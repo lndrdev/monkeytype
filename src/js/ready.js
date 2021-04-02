@@ -1,7 +1,6 @@
 import * as ManualRestart from "./manual-restart-tracker";
 import Config, * as UpdateConfig from "./config";
 import * as Misc from "./misc";
-import * as VerificationController from "./verification-controller";
 import * as Settings from "./settings";
 import * as RouteController from "./route-controller";
 import * as UI from "./ui";
@@ -29,20 +28,7 @@ $(document).ready(() => {
     .removeClass("hidden")
     .stop(true, true)
     .animate({ opacity: 1 }, 250, () => {
-      if (window.location.pathname === "/verify") {
-        const fragment = new URLSearchParams(window.location.hash.slice(1));
-        if (fragment.has("access_token")) {
-          const accessToken = fragment.get("access_token");
-          const tokenType = fragment.get("token_type");
-          VerificationController.set({
-            accessToken: accessToken,
-            tokenType: tokenType,
-          });
-          history.replaceState("/", null, "/");
-        }
-      } else if (window.location.pathname === "/account") {
-        // history.replaceState("/", null, "/");
-      } else if (/challenge_.+/g.test(window.location.pathname)) {
+      if (/challenge_.+/g.test(window.location.pathname)) {
         //do nothing
         // }
       } else if (window.location.pathname !== "/") {

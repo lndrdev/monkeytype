@@ -8,12 +8,9 @@ import * as CommandlineLists from "./commandline-lists";
 import * as Commandline from "./commandline";
 import * as TestUI from "./test-ui";
 import * as TestConfig from "./test-config";
-import * as SignOutButton from "./sign-out-button";
 import * as TestStats from "./test-stats";
 import * as ManualRestart from "./manual-restart-tracker";
 import * as Settings from "./settings";
-import * as Account from "./account";
-import * as Leaderboards from "./leaderboards";
 
 export let pageTransition = false;
 
@@ -130,7 +127,6 @@ export function changePage(page) {
         TestConfig.show();
       }
     );
-    SignOutButton.hide();
     // restartCount = 0;
     // incompleteTestSeconds = 0;
     TestStats.resetIncomplete();
@@ -145,7 +141,6 @@ export function changePage(page) {
       $(".page.pageAbout").addClass("active");
     });
     TestConfig.hide();
-    SignOutButton.hide();
   } else if (page == "settings") {
     setPageTransition(true);
     TestLogic.restart();
@@ -156,52 +151,7 @@ export function changePage(page) {
     });
     Settings.update();
     TestConfig.hide();
-    SignOutButton.hide();
-  } else if (page == "account") {
-    if (!firebase.auth().currentUser) {
-      changePage("login");
-    } else {
-      setPageTransition(true);
-      TestLogic.restart();
-      swapElements(
-        activePage,
-        $(".page.pageAccount"),
-        250,
-        () => {
-          setPageTransition(false);
-          history.pushState("account", null, "account");
-          $(".page.pageAccount").addClass("active");
-        },
-        () => {
-          SignOutButton.show();
-        }
-      );
-      Account.update();
-      TestConfig.hide();
-    }
-  } else if (page == "login") {
-    if (firebase.auth().currentUser != null) {
-      changePage("account");
-    } else {
-      setPageTransition(true);
-      TestLogic.restart();
-      swapElements(activePage, $(".page.pageLogin"), 250, () => {
-        setPageTransition(false);
-        history.pushState("login", null, "login");
-        $(".page.pageLogin").addClass("active");
-      });
-      TestConfig.hide();
-      SignOutButton.hide();
-    }
   }
-}
-
-if (firebase.app().options.projectId === "monkey-type-dev-67af4") {
-  $("#top .logo .bottom").text("monkey-dev");
-  $("head title").text("Monkey Dev");
-  $("body").append(
-    `<div class="devIndicator tr">DEV</div><div class="devIndicator bl">DEV</div>`
-  );
 }
 
 if (window.location.hostname === "localhost") {
@@ -210,7 +160,6 @@ if (window.location.hostname === "localhost") {
   };
   $("#top .logo .top").text("localhost");
   $("head title").text($("head title").text() + " (localhost)");
-  firebase.functions().useFunctionsEmulator("http://localhost:5001");
   $("body").append(
     `<div class="devIndicator tl">local</div><div class="devIndicator br">local</div>`
   );
@@ -254,11 +203,6 @@ $(document).on("click", "#bottom .leftright .right .current-theme", (e) => {
   }
 });
 
-$(document.body).on("click", ".pageAbout .aboutEnableAds", () => {
-  CommandlineLists.pushCurrent(CommandlineLists.commandsEnableAds);
-  Commandline.show();
-});
-
 window.addEventListener("beforeunload", (event) => {
   // Cancel the event as stated by the standard.
   if (
@@ -294,11 +238,7 @@ $(document).on("click", "#top .logo", (e) => {
 });
 
 $(document).on("click", "#top #menu .icon-button", (e) => {
-  if ($(e.currentTarget).hasClass("leaderboards")) {
-    Leaderboards.show();
-  } else {
-    const href = $(e.currentTarget).attr("href");
-    ManualRestart.set();
-    changePage(href.replace("/", ""));
-  }
+  const href = $(e.currentTarget).attr("href");
+  ManualRestart.set();
+  changePage(href.replace("/", ""));
 });

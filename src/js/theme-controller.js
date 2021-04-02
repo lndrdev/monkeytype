@@ -94,13 +94,6 @@ export function apply(themeName) {
     });
   }
 
-  try {
-    firebase.analytics().logEvent("changedTheme", {
-      theme: themeName,
-    });
-  } catch (e) {
-    console.log("Analytics unavailable");
-  }
   setTimeout(() => {
     $(".keymap-key").attr("style", "");
     ChartController.updateAllChartColors();

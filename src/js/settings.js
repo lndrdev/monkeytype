@@ -5,13 +5,9 @@ import * as Misc from "./misc";
 import layouts from "./layouts";
 import * as LanguagePicker from "./language-picker";
 import * as Notifications from "./notifications";
-import * as DB from "./db";
 import * as Loader from "./loader";
-import * as CloudFunctions from "./cloud-functions";
 import * as Funbox from "./funbox";
-import * as TagController from "./tag-controller";
 import * as SimplePopups from "./simple-popups";
-import * as EditTagsPopup from "./edit-tags-popup";
 import * as ThemePicker from "./theme-picker";
 
 export let groups = {};
@@ -114,7 +110,6 @@ async function initGroups() {
     "repeatQuotes",
     UpdateConfig.setRepeatQuotes
   );
-  groups.enableAds = new SettingsGroup("enableAds", UpdateConfig.setEnableAds);
   groups.alwaysShowWordsHistory = new SettingsGroup(
     "alwaysShowWordsHistory",
     UpdateConfig.setAlwaysShowWordsHistory
@@ -386,45 +381,6 @@ export function hideAccountSection() {
   $(`.settingsGroup.account`).addClass("hidden");
 }
 
-function showActiveTags() {
-  DB.getSnapshot().tags.forEach((tag) => {
-    if (tag.active === true) {
-      $(
-        `.pageSettings .section.tags .tagsList .tag[id='${tag.id}'] .active`
-      ).html('<i class="fas fa-check-square"></i>');
-    } else {
-      $(
-        `.pageSettings .section.tags .tagsList .tag[id='${tag.id}'] .active`
-      ).html('<i class="fas fa-square"></i>');
-    }
-  });
-}
-
-export function updateDiscordSection() {
-  //no code and no discord
-  if (firebase.auth().currentUser == null) {
-    $(".pageSettings .section.discordIntegration").addClass("hidden");
-  } else {
-    if (DB.getSnapshot() == null) return;
-    $(".pageSettings .section.discordIntegration").removeClass("hidden");
-
-    if (DB.getSnapshot().discordId == undefined) {
-      //show button
-      $(".pageSettings .section.discordIntegration .buttons").removeClass(
-        "hidden"
-      );
-      $(".pageSettings .section.discordIntegration .info").addClass("hidden");
-    } else {
-      $(".pageSettings .section.discordIntegration .buttons").addClass(
-        "hidden"
-      );
-      $(".pageSettings .section.discordIntegration .info").removeClass(
-        "hidden"
-      );
-    }
-  }
-}
-
 function setActiveFunboxButton() {
   $(`.pageSettings .section.funbox .button`).removeClass("active");
   $(
@@ -432,68 +388,15 @@ function setActiveFunboxButton() {
   ).addClass("active");
 }
 
-function refreshTagsSettingsSection() {
-  if (firebase.auth().currentUser !== null && DB.getSnapshot() !== null) {
-    let tagsEl = $(".pageSettings .section.tags .tagsList").empty();
-    DB.getSnapshot().tags.forEach((tag) => {
-      let tagPbString = "No PB found";
-      if (tag.pb != undefined && tag.pb > 0) {
-        tagPbString = `PB: ${tag.pb}`;
-      }
-      if (tag.active === true) {
-        tagsEl.append(`
-
-              <div class="tag" id="${tag.id}">
-                  <div class="active" active="true">
-                      <i class="fas fa-check-square"></i>
-                  </div>
-                  <div class="title">${tag.name}</div>
-                  <div class="editButton"><i class="fas fa-pen"></i></div>
-                  <div class="clearPbButton hidden" aria-label="${tagPbString}" data-balloon-pos="up"><i class="fas fa-crown"></i></div>
-                  <div class="removeButton"><i class="fas fa-trash"></i></div>
-              </div>
-
-            `);
-      } else {
-        tagsEl.append(`
-
-              <div class="tag" id="${tag.id}">
-                  <div class="active" active="false">
-                      <i class="fas fa-square"></i>
-                  </div>
-                  <div class="title">${tag.name}</div>
-                  <div class="editButton"><i class="fas fa-pen"></i></div>
-                  <div class="clearPbButton hidden" aria-label="${tagPbString}" data-balloon-pos="up"><i class="fas fa-crown"></i></div>
-                  <div class="removeButton"><i class="fas fa-trash"></i></div>
-              </div>
-
-            `);
-      }
-    });
-    $(".pageSettings .section.tags").removeClass("hidden");
-  } else {
-    $(".pageSettings .section.tags").addClass("hidden");
-  }
-}
-
-export function showAccountSection() {
-  $(`.sectionGroupTitle[group='account']`).removeClass("hidden");
-  $(`.settingsGroup.account`).removeClass("hidden");
-  refreshTagsSettingsSection();
-  updateDiscordSection();
-}
-
 export function update() {
   Object.keys(groups).forEach((group) => {
     groups[group].updateButton();
   });
 
-  refreshTagsSettingsSection();
   LanguagePicker.setActiveGroup();
   setActiveFunboxButton();
   ThemePicker.updateActiveTab();
   ThemePicker.setCustomInputs();
-  updateDiscordSection();
   ThemePicker.refreshButtons();
 
   if (Config.paceCaret === "custom") {
@@ -573,53 +476,6 @@ $(document).on(
   }
 );
 
-//discord
-$(
-  ".pageSettings .section.discordIntegration .buttons .generateCodeButton"
-).click((e) => {
-  Loader.show();
-  CloudFunctions.generatePairingCode({ uid: firebase.auth().currentUser.uid })
-    .then((ret) => {
-      Loader.hide();
-      if (ret.data.status === 1 || ret.data.status === 2) {
-        DB.getSnapshot().pairingCode = ret.data.pairingCode;
-        $(".pageSettings .section.discordIntegration .code .bottom").text(
-          ret.data.pairingCode
-        );
-        $(".pageSettings .section.discordIntegration .howtocode").text(
-          ret.data.pairingCode
-        );
-        updateDiscordSection();
-      }
-    })
-    .catch((e) => {
-      Loader.hide();
-      Notifications.add("Something went wrong. Error: " + e.message, -1);
-    });
-});
-
-$(".pageSettings .section.discordIntegration #unlinkDiscordButton").click(
-  (e) => {
-    if (confirm("Are you sure?")) {
-      Loader.show();
-      CloudFunctions.unlinkDiscord({
-        uid: firebase.auth().currentUser.uid,
-      }).then((ret) => {
-        Loader.hide();
-        console.log(ret);
-        if (ret.data.status === 1) {
-          DB.getSnapshot().discordId = null;
-          Notifications.add("Accounts unlinked", 0);
-          updateDiscordSection();
-        } else {
-          Notifications.add("Something went wrong: " + ret.data.message, -1);
-          updateDiscordSection();
-        }
-      });
-    }
-  }
-);
-
 //funbox
 $(document).on("click", ".pageSettings .section.funbox .button", (e) => {
   let funbox = $(e.currentTarget).attr("funbox");
@@ -627,53 +483,6 @@ $(document).on("click", ".pageSettings .section.funbox .button", (e) => {
   Funbox.activate(funbox, type);
   setActiveFunboxButton();
 });
-
-//tags
-$(document).on(
-  "click",
-  ".pageSettings .section.tags .tagsList .tag .active",
-  (e) => {
-    let target = e.currentTarget;
-    let tagid = $(target).parent(".tag").attr("id");
-    TagController.toggle(tagid);
-    showActiveTags();
-  }
-);
-
-$(document).on("click", ".pageSettings .section.tags .addTagButton", (e) => {
-  EditTagsPopup.show("add");
-});
-
-$(document).on(
-  "click",
-  ".pageSettings .section.tags .tagsList .tag .clearPbButton",
-  (e) => {
-    let target = e.currentTarget;
-    let tagid = $(target).parent(".tag").attr("id");
-    let tagname = $(target).siblings(".title")[0].innerHTML;
-    SimplePopups.list.clearTagPb.show([tagid, tagname]);
-  }
-);
-
-$(document).on(
-  "click",
-  ".pageSettings .section.tags .tagsList .tag .editButton",
-  (e) => {
-    let tagid = $(e.currentTarget).parent(".tag").attr("id");
-    let name = $(e.currentTarget).siblings(".title").text();
-    EditTagsPopup.show("edit", tagid, name);
-  }
-);
-
-$(document).on(
-  "click",
-  ".pageSettings .section.tags .tagsList .tag .removeButton",
-  (e) => {
-    let tagid = $(e.currentTarget).parent(".tag").attr("id");
-    let name = $(e.currentTarget).siblings(".title").text();
-    EditTagsPopup.show("remove", tagid, name);
-  }
-);
 
 $("#resetSettingsButton").click((e) => {
   if (confirm("Press OK to confirm.")) {

@@ -1,7 +1,6 @@
 import * as Notifications from "./notifications";
 import * as ThemeColors from "./theme-colors";
 import Config, * as UpdateConfig from "./config";
-import * as DB from "./db";
 import * as TestLogic from "./test-logic";
 import * as Funbox from "./funbox";
 import * as PaceCaret from "./pace-caret";
@@ -193,7 +192,6 @@ export function screenshot() {
   var sourceHeight = src.height(); /*clientHeight/offsetHeight from div#target*/
   $("#notificationCenter").addClass("hidden");
   $("#commandLineMobileButton").addClass("hidden");
-  $(".pageTest .loginTip").addClass("hidden");
   try {
     html2canvas(document.body, {
       backgroundColor: ThemeColors.bg,
@@ -210,8 +208,6 @@ export function screenshot() {
             $("#commandLineMobileButton").removeClass("hidden");
             $(".pageTest .ssWatermark").addClass("hidden");
             $(".pageTest .buttons").removeClass("hidden");
-            if (firebase.auth().currentUser == null)
-              $(".pageTest .loginTip").removeClass("hidden");
           } else {
             navigator.clipboard
               .write([
@@ -228,8 +224,6 @@ export function screenshot() {
                 Notifications.add("Copied to clipboard", 1, 2);
                 $(".pageTest .ssWatermark").addClass("hidden");
                 $(".pageTest .buttons").removeClass("hidden");
-                if (firebase.auth().currentUser == null)
-                  $(".pageTest .loginTip").removeClass("hidden");
               });
           }
         } catch (e) {
@@ -241,8 +235,6 @@ export function screenshot() {
           );
           $(".pageTest .ssWatermark").addClass("hidden");
           $(".pageTest .buttons").removeClass("hidden");
-          if (firebase.auth().currentUser == null)
-            $(".pageTest .loginTip").removeClass("hidden");
         }
       });
     });
@@ -252,16 +244,12 @@ export function screenshot() {
     Notifications.add("Error creating image: " + e.message, -1);
     $(".pageTest .ssWatermark").addClass("hidden");
     $(".pageTest .buttons").removeClass("hidden");
-    if (firebase.auth().currentUser == null)
-      $(".pageTest .loginTip").removeClass("hidden");
   }
   setTimeout(() => {
     $("#notificationCenter").removeClass("hidden");
     $("#commandLineMobileButton").removeClass("hidden");
     $(".pageTest .ssWatermark").addClass("hidden");
     $(".pageTest .buttons").removeClass("hidden");
-    if (firebase.auth().currentUser == null)
-      $(".pageTest .loginTip").removeClass("hidden");
   }, 3000);
 }
 
@@ -566,24 +554,6 @@ export function updateModesNotice() {
     );
   }
 
-  let tagsString = "";
-  try {
-    DB.getSnapshot().tags.forEach((tag) => {
-      if (tag.active === true) {
-        tagsString += tag.name + ", ";
-      }
-    });
-
-    if (tagsString !== "") {
-      $(".pageTest #testModesNotice").append(
-        `<div class="text-button" commands="commandsTags"><i class="fas fa-tag"></i>${tagsString.substring(
-          0,
-          tagsString.length - 2
-        )}</div>`
-      );
-    }
-  } catch {}
-
   if (anim) {
     $(".pageTest #testModesNotice")
       .css("transition", "none")
@@ -829,9 +799,6 @@ $(document).on("click", "#testModesNotice .text-button", (event) => {
   );
   let func = $(event.currentTarget).attr("function");
   if (commands !== undefined) {
-    if ($(event.currentTarget).attr("commands") === "commandsTags") {
-      CommandlineLists.updateTagCommands();
-    }
     CommandlineLists.pushCurrent(commands);
     Commandline.show();
   } else if (func != undefined) {

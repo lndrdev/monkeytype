@@ -1,7 +1,6 @@
 import * as TestLogic from "./test-logic";
 import * as TestUI from "./test-ui";
 import Config from "./config";
-import * as DB from "./db";
 
 export let settings = null;
 
@@ -40,32 +39,7 @@ export async function init() {
   }
   let wpm;
   if (Config.paceCaret === "pb") {
-    wpm = await DB.getLocalPB(
-      Config.mode,
-      mode2,
-      Config.punctuation,
-      Config.language,
-      Config.difficulty
-    );
   } else if (Config.paceCaret === "average") {
-    let mode2 = "";
-    if (Config.mode === "time") {
-      mode2 = Config.time;
-    } else if (Config.mode === "words") {
-      mode2 = Config.words;
-    } else if (Config.mode === "custom") {
-      mode2 = "custom";
-    } else if (Config.mode === "quote") {
-      mode2 = TestLogic.randomQuote.id;
-    }
-    wpm = await DB.getUserAverageWpm10(
-      Config.mode,
-      mode2,
-      Config.punctuation,
-      Config.language,
-      Config.difficulty
-    );
-    console.log("avg pace " + wpm);
   } else if (Config.paceCaret === "custom") {
     wpm = Config.paceCaretCustomSpeed;
   }

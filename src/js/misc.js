@@ -1,11 +1,5 @@
 import * as Loader from "./loader";
 
-export function getuid() {
-  console.error("Only share this uid with Miodec and nobody else!");
-  console.log(firebase.auth().currentUser.uid);
-  console.error("Only share this uid with Miodec and nobody else!");
-}
-
 function hexToHSL(H) {
   // Convert hex to RGB first
   let r = 0,
@@ -310,21 +304,6 @@ export function getCookie(cname) {
   return "";
 }
 
-export function sendVerificationEmail() {
-  Loader.show();
-  let cu = firebase.auth().currentUser;
-  cu.sendEmailVerification()
-    .then(() => {
-      Loader.hide();
-      showNotification("Email sent to " + cu.email, 4000);
-    })
-    .catch((e) => {
-      Loader.hide();
-      showNotification("Error: " + e.message, 3000);
-      console.error(e.message);
-    });
-}
-
 export function smooth(arr, windowSize, getter = (value) => value, setter) {
   const get = getter;
   const result = [];
@@ -391,19 +370,6 @@ export function getReleasesFromGitHub() {
     }
   );
 }
-
-// function getPatreonNames() {
-//   let namesel = $(".pageAbout .section .supporters");
-//   firebase
-//     .functions()
-//     .httpsCallable("getPatreons")()
-//     .then((data) => {
-//       let names = data.data;
-//       names.forEach((name) => {
-//         namesel.append(`<div>${name}</div>`);
-//       });
-//     });
-// }
 
 export function getLastChar(word) {
   try {

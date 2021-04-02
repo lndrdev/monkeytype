@@ -7,12 +7,9 @@ import chartAnnotation from "chartjs-plugin-annotation";
 Chart.plugins.register(chartTrendline);
 Chart.plugins.register(chartAnnotation);
 
-import * as DB from "./db";
 import * as Misc from "./misc";
-import * as ResultFilters from "./result-filters";
 import Config from "./config";
 import * as SimplePopups from "./simple-popups";
-import * as AccountController from "./account-controller";
 import "./caps-warning";
 import "./support-popup";
 import "./version-popup";

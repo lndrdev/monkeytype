@@ -3,10 +3,8 @@ import * as UI from "./ui";
 
 let mappedRoutes = {
   "/": "pageTest",
-  "/login": "pageLogin",
   "/settings": "pageSettings",
   "/about": "pageAbout",
-  "/account": "pageAccount",
   "/verify": "pageTest",
 };
 
@@ -34,11 +32,5 @@ $(window).on("popstate", (e) => {
   } else if (state == "about") {
     // show about
     UI.changePage("about");
-  } else if (state == "account" || state == "login") {
-    if (firebase.auth().currentUser) {
-      UI.changePage("account");
-    } else {
-      UI.changePage("login");
-    }
   }
 });

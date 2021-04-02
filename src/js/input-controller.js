@@ -766,12 +766,7 @@ $(document).keydown(function (event) {
 
   //blocking firefox from going back in history with backspace
   if (event.key === "Backspace" && wordsFocused) {
-    let t = /INPUT|SELECT|TEXTAREA/i;
-    if (
-      !t.test(event.target.tagName) ||
-      event.target.disabled ||
-      event.target.readOnly
-    ) {
+    if (event.target.disabled || event.target.readOnly) {
       event.preventDefault();
     }
   }
