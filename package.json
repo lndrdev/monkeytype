@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "build": "npx gulp build",
-    "start:dev": "npm run build && concurrently --kill-others \"npx gulp watch\" \"http-server -a 127.0.0.1 -p 5000 dist\""
+    "start:dev": "npm run build && concurrently --kill-others \"npx gulp watch\" \"http-server -a 127.0.0.1 -p 5000 dist\"",
+    "deploy": "npm run build && gh-pages -t -d dist"
   },
   "engines": {
     "node": "10"
@@ -21,6 +22,7 @@
     "dart-sass": "^1.25.0",
     "del": "^6.0.0",
     "eslint": "^6.8.0",
+    "gh-pages": "^3.1.0",
     "gulp": "^4.0.2",
     "gulp-concat": "^2.6.1",
     "gulp-eslint": "^6.0.0",
