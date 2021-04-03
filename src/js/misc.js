@@ -349,14 +349,12 @@ export function mean(array) {
 }
 
 export function getReleasesFromGitHub() {
-  $.getJSON(
-    "https://api.github.com/repos/Miodec/monkeytype/releases",
-    (data) => {
-      $("#bottom .version").text(data[0].name).css("opacity", 1);
-      $("#versionHistory .releases").empty();
-      data.forEach((release) => {
-        if (!release.draft && !release.prerelease) {
-          $("#versionHistory .releases").append(`
+  $.getJSON("releases.json", (data) => {
+    $("#bottom .version").text(data[0].name).css("opacity", 1);
+    $("#versionHistory .releases").empty();
+    data.forEach((release) => {
+      if (!release.draft && !release.prerelease) {
+        $("#versionHistory .releases").append(`
           <div class="release">
             <div class="title">${release.name}</div>
             <div class="date">${moment(release.published_at).format(
@@ -365,10 +363,9 @@ export function getReleasesFromGitHub() {
             <div class="body">${release.body.replace(/\r\n/g, "<br>")}</div>
           </div>
         `);
-        }
-      });
-    }
-  );
+      }
+    });
+  });
 }
 
 export function getLastChar(word) {
