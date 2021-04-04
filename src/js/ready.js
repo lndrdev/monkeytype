@@ -10,8 +10,8 @@ UpdateConfig.loadFromCookie();
 Misc.getReleasesFromGitHub();
 
 $(document).ready(() => {
-  RouteController.handleInitialPageClasses(window.location.pathname);
-  if (window.location.pathname === "/") {
+  RouteController.handleInitialPageClasses(window.location.hash);
+  if (window.location.hash === "") {
     $("#top .config").removeClass("hidden");
   }
   $("body").css("transition", ".25s");
@@ -28,12 +28,11 @@ $(document).ready(() => {
     .removeClass("hidden")
     .stop(true, true)
     .animate({ opacity: 1 }, 250, () => {
-      if (/challenge_.+/g.test(window.location.pathname)) {
+      if (/#challenge_.+/g.test(window.location.hash)) {
         //do nothing
         // }
-      } else if (window.location.pathname !== "/") {
-        let page = window.location.pathname.replace("/", "");
-        UI.changePage(page);
+      } else if (window.location.hash !== "") {
+        UI.changePage(window.location.hash);
       }
     });
   Settings.settingsFillPromise.then(Settings.update);

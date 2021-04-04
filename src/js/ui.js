@@ -121,7 +121,11 @@ export function changePage(page) {
         setPageTransition(false);
         TestUI.focusWords();
         $(".page.pageTest").addClass("active");
-        history.pushState("/", null, "/");
+        history.pushState(
+          window.location.pathname,
+          null,
+          window.location.pathname
+        );
       },
       () => {
         TestConfig.show();
@@ -137,7 +141,7 @@ export function changePage(page) {
     TestLogic.restart();
     swapElements(activePage, $(".page.pageAbout"), 250, () => {
       setPageTransition(false);
-      history.pushState("about", null, "about");
+      history.pushState("#about", null, "#about");
       $(".page.pageAbout").addClass("active");
     });
     TestConfig.hide();
@@ -146,7 +150,7 @@ export function changePage(page) {
     TestLogic.restart();
     swapElements(activePage, $(".page.pageSettings"), 250, () => {
       setPageTransition(false);
-      history.pushState("settings", null, "settings");
+      history.pushState("#settings", null, "#settings");
       $(".page.pageSettings").addClass("active");
     });
     Settings.update();
@@ -240,5 +244,5 @@ $(document).on("click", "#top .logo", (e) => {
 $(document).on("click", "#top #menu .icon-button", (e) => {
   const href = $(e.currentTarget).attr("href");
   ManualRestart.set();
-  changePage(href.replace("/", ""));
+  changePage(href.slice(1));
 });
