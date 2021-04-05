@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "build": "npx gulp build",
-    "start:dev": "npm run build && concurrently --kill-others \"npx gulp watch\" \"python -m http.server -d dist 5000\""
+    "start:dev": "npm run build && concurrently --kill-others \"npx gulp watch\" \"http-server -a 127.0.0.1 -p 5000 dist\""
   },
   "engines": {
     "node": "10"
@@ -25,6 +25,7 @@
     "gulp-concat": "^2.6.1",
     "gulp-eslint": "^6.0.0",
     "gulp-sass": "^4.1.0",
+    "http-server": "^0.12.3",
     "husky": "^4.3.0",
     "prettier": "2.1.2",
     "pretty-quick": "^3.1.0",
