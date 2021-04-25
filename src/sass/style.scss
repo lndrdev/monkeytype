@@ -3,7 +3,7 @@
 :root {
   --roundness: 0.25rem;
   --font: "Roboto Mono";
-  scroll-behavior: smooth;
+  // scroll-behavior: smooth;
   scroll-padding-top: 2rem;
 }
 
@@ -1543,7 +1543,7 @@ key {
 
   // margin-bottom: 2rem;
   .keyTips {
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
   }
 
   #supportMeButton {
