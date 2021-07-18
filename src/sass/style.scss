@@ -2441,16 +2441,6 @@ key {
   opacity: 0.5;
 }
 
-.pageLoading {
-  display: grid;
-  justify-content: center;
-  .preloader {
-    font-size: 2rem;
-    justify-self: center;
-    color: var(--main-color);
-  }
-}
-
 .pageTest {
   position: relative;
 
