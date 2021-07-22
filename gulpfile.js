@@ -7,8 +7,8 @@ const source = require("vinyl-source-stream");
 const buffer = require("vinyl-buffer");
 const vinylPaths = require("vinyl-paths");
 const eslint = require("gulp-eslint");
-var sass = require("gulp-sass");
-sass.compiler = require("dart-sass");
+var sass = require("gulp-sass")(require("dart-sass"));
+// sass.compiler = require("dart-sass");
 
 let eslintConfig = {
   parser: "babel-eslint",
@@ -96,10 +96,12 @@ const refactoredSrc = [
   "./src/js/input-controller.js",
   "./src/js/route-controller.js",
   "./src/js/ready.js",
+  "./src/js/monkey-power.js",
 
   "./src/js/elements/monkey.js",
   "./src/js/elements/notifications.js",
   "./src/js/elements/loader.js",
+  "./src/js/elements/about-page.js",
 
   "./src/js/popups/custom-text-popup.js",
   "./src/js/popups/quote-search-popup.js",
@@ -129,6 +131,7 @@ const refactoredSrc = [
   "./src/js/test/live-wpm.js",
   "./src/js/test/caps-warning.js",
   "./src/js/test/live-acc.js",
+  "./src/js/test/live-burst.js",
   "./src/js/test/timer-progress.js",
   "./src/js/test/test-logic.js",
   "./src/js/test/funbox.js",
@@ -137,6 +140,10 @@ const refactoredSrc = [
   "./src/js/test/test-timer.js",
   "./src/js/test/test-config.js",
   "./src/js/test/layout-emulator.js",
+  "./src/js/test/poetry.js",
+  "./src/js/test/today-tracker.js",
+  "./src/js/test/weak-spot.js",
+  "./src/js/replay.js",
 ];
 
 //legacy files

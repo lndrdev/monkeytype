@@ -6,3 +6,4 @@ global.simplePopups = SimplePopups.simplePopups;
 //these exports are just for debugging in the browser
 global.config = Config;
 // global.addnotif = Notifications.add;
+global.glarsesMode = toggleGlarses;
