@@ -7,3 +7,5 @@ global.simplePopups = SimplePopups.simplePopups;
 global.config = Config;
 // global.addnotif = Notifications.add;
 global.glarsesMode = toggleGlarses;
+
+global.stats = TestStats.getStats;

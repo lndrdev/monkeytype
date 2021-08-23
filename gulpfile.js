@@ -1,4 +1,5 @@
 const { task, src, dest, series, watch } = require("gulp");
+const axios = require("axios");
 const browserify = require("browserify");
 const babelify = require("babelify");
 const concat = require("gulp-concat");
@@ -143,6 +144,7 @@ const refactoredSrc = [
   "./src/js/test/poetry.js",
   "./src/js/test/today-tracker.js",
   "./src/js/test/weak-spot.js",
+  "./src/js/test/wordset.js",
   "./src/js/replay.js",
 ];
 

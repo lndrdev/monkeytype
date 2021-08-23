@@ -35,6 +35,13 @@ function handleTab(event) {
   if (TestUI.resultCalculating) {
     event.preventDefault();
   }
+  if (
+    !$("#presetWrapper").hasClass("hidden") ||
+    !$("#tagsWrapper").hasClass("hidden")
+  ) {
+    event.preventDefault();
+    return;
+  }
   if ($("#customTextPopup .textarea").is(":focus")) {
     event.preventDefault();
 
@@ -69,7 +76,11 @@ function handleTab(event) {
         ) {
           //ignore
         } else {
-          if (event.shiftKey) ManualRestart.set();
+          if (event.shiftKey) {
+            ManualRestart.set();
+          } else {
+            ManualRestart.reset();
+          }
           event.preventDefault();
           if (
             TestLogic.active &&
@@ -484,6 +495,7 @@ function handleAlpha(event) {
       "End",
       "GroupPrevious",
       "GroupNext",
+      "WakeUp",
       undefined,
     ].includes(event.key)
   ) {

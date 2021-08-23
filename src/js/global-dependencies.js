@@ -19,3 +19,4 @@ import "./import-settings-popup";
 import "./input-controller";
 import "./ready";
 import "./about-page";
+import * as TestStats from "./test-stats";
