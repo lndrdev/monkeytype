@@ -46,7 +46,7 @@ let eslintConfig = {
     "no-import-assign": "error",
     "no-inner-declarations": "error",
     "no-invalid-regexp": "error",
-    "no-irregular-whitespace": "error",
+    "no-irregular-whitespace": "warn",
     "no-misleading-character-class": "error",
     "no-mixed-spaces-and-tabs": "error",
     "no-new-symbol": "error",
@@ -103,6 +103,8 @@ const refactoredSrc = [
   "./src/js/elements/notifications.js",
   "./src/js/elements/loader.js",
   "./src/js/elements/about-page.js",
+  "./src/js/elements/psa.js",
+  "./src/js/elements/new-version-notification.js",
 
   "./src/js/popups/custom-text-popup.js",
   "./src/js/popups/quote-search-popup.js",
@@ -120,6 +122,8 @@ const refactoredSrc = [
   "./src/js/settings/settings-group.js",
 
   "./src/js/test/custom-text.js",
+  "./src/js/test/british-english.js",
+  "./src/js/test/lazy-mode.js",
   "./src/js/test/shift-tracker.js",
   "./src/js/test/out-of-focus.js",
   "./src/js/test/caret.js",

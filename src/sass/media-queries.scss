@@ -1,7 +1,13 @@
 @media only screen and (max-width: 1200px) {
-  #leaderboards {
-    .tables {
-      grid-template-columns: unset !important;
+  #leaderboardsWrapper {
+    #leaderboards {
+      .tables {
+        grid-template-columns: unset;
+      }
+      .tables .rightTableWrapper,
+      .tables .leftTableWrapper {
+        height: calc(50vh - 12rem);
+      }
     }
   }
 }
@@ -38,6 +44,9 @@
 }
 
 @media only screen and (max-width: 1000px) {
+  #rateQuotePopup {
+    width: 90vw !important;
+  }
   #bottom {
     .leftright {
       .left {
@@ -57,12 +66,12 @@
 }
 
 @media only screen and (max-width: 900px) {
-  #leaderboards {
-    .mainTitle {
-      font-size: 1.5rem !important;
-      line-height: 1.5rem !important;
-    }
-  }
+  // #leaderboards {
+  //   .mainTitle {
+  //     font-size: 1.5rem !important;
+  //     line-height: 1.5rem !important;
+  //   }
+  // }
   .merchBanner {
     img {
       display: none;
@@ -92,6 +101,7 @@
       gap: 0.5rem;
       font-size: 0.8rem;
       line-height: 0.8rem;
+      margin-top: -0.5rem;
 
       .icon-button {
         padding: 0.25rem;
@@ -119,7 +129,29 @@
   }
 }
 
+@media only screen and (max-width: 700px) {
+  #leaderboardsWrapper {
+    #leaderboards {
+      .leaderboardsTop {
+        flex-direction: column;
+        align-items: baseline;
+      }
+    }
+  }
+}
+
 @media only screen and (max-width: 650px) {
+  #rateQuotePopup {
+    .ratingStats {
+      grid-template-columns: 1fr 1fr !important;
+    }
+    .quote {
+      grid-template-areas:
+        "text text text"
+        "source source source"
+        "id length length" !important;
+    }
+  }
   .pageSettings .section {
     grid-template-columns: 1fr;
     grid-template-areas:
@@ -207,18 +239,24 @@
       }
     }
   }
-
-  .leaderboardsTop {
+  #leaderboardsWrapper #leaderboards {
+    padding: 1rem;
+    gap: 1rem;
     .mainTitle {
-      font-size: 4vw !important;
+      font-size: 2rem;
+      line-height: 2rem;
     }
+    .title {
+      font-size: 1rem;
+    }
+    .leaderboardsTop {
+      .buttonGroup {
+        gap: 0.1rem !important;
 
-    .buttonGroup {
-      gap: 0.1rem !important;
-
-      .button {
-        padding: 0.4rem !important;
-        font-size: 0.7rem !important;
+        .button {
+          padding: 0.4rem !important;
+          font-size: 0.7rem !important;
+        }
       }
     }
   }
@@ -233,6 +271,13 @@
   #top {
     align-items: self-end;
     .logo {
+      .icon {
+        width: 1.5rem !important;
+      }
+      .text {
+        font-size: 1.5rem !important;
+        margin-bottom: 0.3rem !important;
+      }
       .bottom {
         font-size: 1.75rem;
         line-height: 1.75rem;
@@ -306,13 +351,9 @@
   #commandLineInput {
     width: 300px !important;
   }
-  #leaderboards {
-    .tables {
-      width: 95% !important;
-      .titleAndTable {
-        width: 90% !important;
-      }
-    }
+
+  #leaderboardsWrapper #leaderboards .tables .titleAndTable .titleAndButtons {
+    grid-template-columns: unset;
   }
 }
 

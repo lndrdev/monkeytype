@@ -9,3 +9,5 @@ global.config = Config;
 global.glarsesMode = toggleGlarses;
 
 global.stats = TestStats.getStats;
+
+global.replay = Replay.getReplayExport;
