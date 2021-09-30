@@ -104,8 +104,6 @@ function handleTab(event) {
 function backspaceToPrevious() {
   if (!TestLogic.active) return;
 
-  Sound.playClick(Config.playSoundOnClick);
-
   if (
     TestLogic.input.history.length == 0 ||
     TestUI.currentWordElementIndex == 0
@@ -410,7 +408,7 @@ function handleChar(char, charIndex) {
     char = " ";
   }
 
-  if (/\s/.test(char)) {
+  if (char !== "\n" && char !== "\t" && /\s/.test(char)) {
     handleSpace();
 
     //insert space for expert and master or strict space,
@@ -659,6 +657,7 @@ $(document).keydown((event) => {
 
   //blocking firefox from going back in history with backspace
   if (event.key === "Backspace") {
+    Sound.playClick(Config.playSoundOnClick);
     let t = /INPUT|SELECT|TEXTAREA/i;
     if (
       !t.test(event.target.tagName) ||
