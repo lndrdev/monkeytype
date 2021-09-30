@@ -15,7 +15,10 @@ let eslintConfig = {
   parser: "babel-eslint",
   globals: ["jQuery", "$", "moment", "html2canvas", "ClipboardItem"],
   envs: ["es6", "browser", "node"],
+  plugins: ["json"],
+  extends: ["plugin:json/recommended"],
   rules: {
+    "json/*": ["error"],
     "constructor-super": "error",
     "for-direction": "error",
     "getter-return": "error",
@@ -206,7 +209,9 @@ task("browserify", function () {
 
 //lints only the refactored files
 task("lint", function () {
-  return src(refactoredSrc)
+  let filelist = refactoredSrc;
+  filelist.push("./static/**/*.json");
+  return src(filelist)
     .pipe(eslint(eslintConfig))
     .pipe(eslint.format())
     .pipe(eslint.failAfterError());
