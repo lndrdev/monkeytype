@@ -239,29 +239,6 @@ let commandsLiveWpm = {
   ],
 };
 
-let commandsCapsLockBackspace = {
-  title: "Caps lock backspace...",
-  configKey: "capsLockBackspace",
-  list: [
-    {
-      id: "setCapsLockBackspaceOff",
-      display: "off",
-      configValue: false,
-      exec: () => {
-        UpdateConfig.setShowCapsLockBackspace(false);
-      },
-    },
-    {
-      id: "setCapsLockBackspaceOn",
-      display: "on",
-      configValue: true,
-      exec: () => {
-        UpdateConfig.setShowCapsLockBackspace(true);
-      },
-    },
-  ],
-};
-
 let commandsLiveAcc = {
   title: "Live accuracy...",
   configKey: "showLiveAcc",
@@ -879,6 +856,15 @@ let commandsSoundOnClick = {
       configValue: "4",
       exec: () => {
         UpdateConfig.setPlaySoundOnClick("4");
+        Sound.playClick(Config.playSoundOnClick);
+      },
+    },
+    {
+      id: "setSoundOnClick5",
+      display: "5",
+      configValue: "5",
+      exec: () => {
+        UpdateConfig.setPlaySoundOnClick("5");
         Sound.playClick(Config.playSoundOnClick);
       },
     },
@@ -2553,12 +2539,6 @@ export let defaultCommands = {
       alias: "fun box",
       icon: "fa-gamepad",
       subgroup: commandsFunbox,
-    },
-    {
-      id: "changeCapsLockBackspace",
-      display: "Caps lock backspace...",
-      icon: "fa-backspace",
-      subgroup: commandsCapsLockBackspace,
     },
     {
       id: "changeLayout",
