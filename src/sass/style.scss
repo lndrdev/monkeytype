@@ -1804,6 +1804,10 @@ key {
   // "login login"
   // "ssw ssw";
 
+  &:focus {
+    outline: none;
+  }
+
   .buttons {
     display: grid;
     grid-auto-flow: column;
