@@ -578,17 +578,6 @@
     }
   }
 
-  .loginTip {
-    grid-column: 1/3;
-    text-align: center;
-    color: var(--sub-color);
-    // grid-area: login;
-    grid-column: 1/3;
-    .link {
-      cursor: pointer;
-    }
-  }
-
   .stats {
     grid-area: stats;
     display: grid;
@@ -679,7 +668,6 @@
     // }
 
     .info,
-    .tags,
     .source {
       .top {
         font-size: 1rem;
@@ -694,10 +682,6 @@
 
     .source {
       max-width: 30rem;
-    }
-
-    .tags .bottom .fas {
-      margin-left: 0.5rem;
     }
 
     .wpm {
@@ -741,8 +725,7 @@
       }
     }
 
-    .testType,
-    .leaderboards {
+    .testType {
       .bottom {
         font-size: 1rem;
         line-height: 1rem;

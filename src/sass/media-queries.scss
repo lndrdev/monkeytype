@@ -1,17 +1,3 @@
-@media only screen and (max-width: 1200px) {
-  #leaderboardsWrapper {
-    #leaderboards {
-      .tables {
-        grid-template-columns: unset;
-      }
-      .tables .rightTableWrapper,
-      .tables .leftTableWrapper {
-        height: calc(50vh - 12rem);
-      }
-    }
-  }
-}
-
 @media only screen and (max-width: 1050px) {
   #centerContent {
     .pageSettings .section.fullWidth .buttons {
@@ -129,17 +115,6 @@
   }
 }
 
-@media only screen and (max-width: 700px) {
-  #leaderboardsWrapper {
-    #leaderboards {
-      .leaderboardsTop {
-        flex-direction: column;
-        align-items: baseline;
-      }
-    }
-  }
-}
-
 @media only screen and (max-width: 650px) {
   #rateQuotePopup {
     .ratingStats {
@@ -236,27 +211,6 @@
         display: flex !important;
         flex-direction: column;
         justify-content: flex-start;
-      }
-    }
-  }
-  #leaderboardsWrapper #leaderboards {
-    padding: 1rem;
-    gap: 1rem;
-    .mainTitle {
-      font-size: 2rem;
-      line-height: 2rem;
-    }
-    .title {
-      font-size: 1rem;
-    }
-    .leaderboardsTop {
-      .buttonGroup {
-        gap: 0.1rem !important;
-
-        .button {
-          padding: 0.4rem !important;
-          font-size: 0.7rem !important;
-        }
       }
     }
   }
@@ -361,10 +315,6 @@
   #commandLine,
   #commandLineInput {
     width: 300px !important;
-  }
-
-  #leaderboardsWrapper #leaderboards .tables .titleAndTable .titleAndButtons {
-    grid-template-columns: unset;
   }
 }
 
