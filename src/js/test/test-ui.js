@@ -602,7 +602,10 @@ export function updateModesNotice() {
 
   if (Config.layout !== "default") {
     $(".pageTest #testModesNotice").append(
-      `<div class="text-button" commands="commandsLayouts"><i class="fas fa-keyboard"></i>${Config.layout}</div>`
+      `<div class="text-button" commands="commandsLayouts"><i class="fas fa-keyboard"></i>emulating ${Config.layout.replace(
+        /_/g,
+        " "
+      )}</div>`
     );
   }
 
