@@ -1,4 +1,4 @@
-#customTextPopupWrapper {
+.popupWrapper {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.75);
@@ -10,7 +10,9 @@
   justify-content: center;
   align-items: center;
   padding: 5rem 0;
+}
 
+#customTextPopupWrapper {
   #customTextPopup {
     background: var(--bg-color);
     border-radius: var(--roundness);
@@ -60,18 +62,6 @@
 }
 
 #wordFilterPopupWrapper {
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.75);
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 1000;
-  display: grid;
-  justify-content: center;
-  align-items: center;
-  padding: 5rem 0;
-
   #wordFilterPopup {
     color: var(--sub-color);
     background: var(--bg-color);
@@ -108,127 +98,7 @@
   }
 }
 
-#rateQuotePopupWrapper {
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.75);
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 1000;
-  display: grid;
-  justify-content: center;
-  align-items: center;
-  padding: 5rem 0;
-
-  #rateQuotePopup {
-    color: var(--sub-color);
-    background: var(--bg-color);
-    border-radius: var(--roundness);
-    padding: 2rem;
-    display: grid;
-    gap: 2rem;
-    width: 800px;
-
-    display: grid;
-    grid-template-areas: "ratingStats ratingStats submitButton" "spacer spacer spacer" "quote quote quote";
-    grid-template-columns: auto 1fr;
-
-    color: var(--text-color);
-
-    .spacer {
-      grid-area: spacer;
-      grid-column: 1/4;
-      width: 100%;
-      height: 0.1rem;
-      border-radius: var(--roundness);
-      background: var(--sub-color);
-      opacity: 0.25;
-    }
-
-    .submitButton {
-      font-size: 2rem;
-      grid-area: submitButton;
-      color: var(--sub-color);
-      &:hover {
-        color: var(--text-color);
-      }
-    }
-
-    .top {
-      color: var(--sub-color);
-      font-size: 0.8rem;
-    }
-
-    .ratingStats {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 1rem;
-      grid-area: ratingStats;
-      .top {
-        font-size: 1rem;
-      }
-      .val {
-        font-size: 2.25rem;
-      }
-    }
-
-    .quote {
-      display: grid;
-      grid-area: quote;
-      gap: 1rem;
-      grid-template-areas:
-        "text text text"
-        "id length source";
-      grid-template-columns: 1fr 1fr 3fr;
-      .text {
-        grid-area: text;
-      }
-      .id {
-        grid-area: id;
-      }
-      .length {
-        grid-area: length;
-      }
-      .source {
-        grid-area: source;
-      }
-    }
-
-    .stars {
-      display: grid;
-      color: var(--sub-color);
-      font-size: 2rem;
-      grid-template-columns: auto auto auto auto auto;
-      justify-content: flex-start;
-      align-items: center;
-      cursor: pointer;
-    }
-    .star {
-      transition: 0.125s;
-    }
-    i {
-      pointer-events: none;
-    }
-    .star.active {
-      color: var(--text-color);
-    }
-  }
-}
-
 #simplePopupWrapper {
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.75);
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 1000;
-  display: grid;
-  justify-content: center;
-  align-items: center;
-  padding: 5rem 0;
-
   #simplePopup {
     background: var(--bg-color);
     border-radius: var(--roundness);
@@ -257,18 +127,6 @@
 #customWordAmountPopupWrapper,
 #customTestDurationPopupWrapper,
 #practiseWordsPopupWrapper {
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.75);
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 1000;
-  display: grid;
-  justify-content: center;
-  align-items: center;
-  padding: 5rem 0;
-
   #customWordAmountPopup,
   #customTestDurationPopup,
   #practiseWordsPopup {
@@ -304,18 +162,6 @@
 }
 
 #customThemeShareWrapper {
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.75);
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 1000;
-  display: grid;
-  justify-content: center;
-  align-items: center;
-  padding: 5rem 0;
-
   #customThemeShare {
     width: 50vw;
     background: var(--bg-color);
@@ -328,18 +174,6 @@
 }
 
 #quoteSearchPopupWrapper {
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.75);
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 1000;
-  display: grid;
-  justify-content: center;
-  align-items: center;
-  padding: 5rem 0;
-
   #quoteSearchPopup {
     background: var(--bg-color);
     border-radius: var(--roundness);
@@ -351,12 +185,27 @@
     height: 80vh;
     grid-template-rows: auto auto auto 1fr;
 
+    #quoteSearchTop {
+      display: flex;
+      justify-content: space-between;
+
+      .title {
+        font-size: 1.5rem;
+        color: var(--sub-color);
+      }
+
+      .buttons {
+        width: 33%;
+        display: grid;
+        gap: 0.5rem;
+        .button {
+          width: 100%;
+        }
+      }
+    }
+
     #extraResults {
       text-align: center;
-      color: var(--sub-color);
-    }
-    .title {
-      font-size: 1.5rem;
       color: var(--sub-color);
     }
     #quoteSearchResults {
@@ -433,18 +282,6 @@
   }
 }
 #settingsImportWrapper {
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.75);
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 1000;
-  display: grid;
-  justify-content: center;
-  align-items: center;
-  padding: 5rem 0;
-
   #settingsImport {
     width: 50vw;
     background: var(--bg-color);
@@ -522,18 +359,6 @@
 }
 
 #supportMeWrapper {
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.75);
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 1000;
-  display: grid;
-  justify-content: center;
-  align-items: center;
-  padding: 5rem 0;
-
   #supportMe {
     width: 900px;
     // height: 400px;
