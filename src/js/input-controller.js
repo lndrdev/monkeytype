@@ -568,8 +568,7 @@ function handleTab(event) {
   } else if (
     !TestUI.resultCalculating &&
     $("#commandLineWrapper").hasClass("hidden") &&
-    $("#simplePopupWrapper").hasClass("hidden") &&
-    !$(".page.pageLogin").hasClass("active")
+    $("#simplePopupWrapper").hasClass("hidden")
   ) {
     if ($(".pageTest").hasClass("active")) {
       if (Config.quickTab) {
