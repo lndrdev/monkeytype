@@ -569,7 +569,6 @@ function handleTab(event) {
     !TestUI.resultCalculating &&
     $("#commandLineWrapper").hasClass("hidden") &&
     $("#simplePopupWrapper").hasClass("hidden") &&
-    $("#quoteSubmitPopupWrapper").hasClass("hidden") &&
     !$(".page.pageLogin").hasClass("active")
   ) {
     if ($(".pageTest").hasClass("active")) {
@@ -631,8 +630,6 @@ $(document).keydown((event) => {
     !$("#customWordAmountPopupWrapper").hasClass("hidden") ||
     !$("#customTestDurationPopupWrapper").hasClass("hidden") ||
     !$("#quoteSearchPopupWrapper").hasClass("hidden") ||
-    !$("#quoteSubmitPopupWrapper").hasClass("hidden") ||
-    !$("#quoteApprovePopupWrapper").hasClass("hidden") ||
     !$("#wordFilterPopupWrapper").hasClass("hidden");
 
   const allowTyping =
