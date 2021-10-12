@@ -13,7 +13,13 @@ var sass = require("gulp-sass")(require("dart-sass"));
 
 let eslintConfig = {
   parser: "babel-eslint",
-  globals: ["jQuery", "$", "moment", "html2canvas", "ClipboardItem"],
+  globals: [
+    "jQuery",
+    "$",
+    "moment",
+    "html2canvas",
+    "ClipboardItem",
+  ],
   envs: ["es6", "browser", "node"],
   plugins: ["json"],
   extends: ["plugin:json/recommended"],
