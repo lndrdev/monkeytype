@@ -85,13 +85,10 @@ export function restart() {
   }
 }
 
-export function updateStyle() {
-  hide();
-  update();
-  setTimeout(() => {
-    show();
-  }, 125);
-}
+let timerNumberElement = document.querySelector("#timerNumber");
+let miniTimerNumberElement = document.querySelector(
+  "#miniTimerAndLiveWpm .time"
+);
 
 export function update() {
   let time = TestTimer.time;
@@ -111,7 +108,7 @@ export function update() {
           {
             width: percent + "vw",
           },
-          1000,
+          TestTimer.slowTimer ? 0 : 1000,
           "linear"
         );
     } else if (Config.timerStyle === "text") {
@@ -119,13 +116,13 @@ export function update() {
       if (maxtime === 0) {
         displayTime = Misc.secondsToString(time);
       }
-      $("#timerNumber").html("<div>" + displayTime + "</div>");
+      timerNumberElement.innerHTML = "<div>" + displayTime + "</div>";
     } else if (Config.timerStyle === "mini") {
       let displayTime = Misc.secondsToString(maxtime - time);
       if (maxtime === 0) {
         displayTime = Misc.secondsToString(time);
       }
-      $("#miniTimerAndLiveWpm .time").html(displayTime);
+      miniTimerNumberElement.innerHTML = displayTime;
     }
   } else if (
     Config.mode === "words" ||
@@ -144,7 +141,7 @@ export function update() {
       }
     }
     if (Config.mode === "quote") {
-      outof = TestLogic.randomQuote.textSplit.length;
+      outof = TestLogic?.randomQuote?.textSplit?.length ?? 1;
     }
     if (Config.timerStyle === "bar") {
       let percent = Math.floor(
@@ -156,36 +153,38 @@ export function update() {
           {
             width: percent + "vw",
           },
-          250
+          TestTimer.slowTimer ? 0 : 250
         );
     } else if (Config.timerStyle === "text") {
       if (outof === 0) {
-        $("#timerNumber").html(
-          "<div>" + `${TestLogic.input.history.length}` + "</div>"
-        );
+        timerNumberElement.innerHTML =
+          "<div>" + `${TestLogic.input.history.length}` + "</div>";
       } else {
-        $("#timerNumber").html(
-          "<div>" + `${TestLogic.input.history.length}/${outof}` + "</div>"
-        );
+        timerNumberElement.innerHTML =
+          "<div>" + `${TestLogic.input.history.length}/${outof}` + "</div>";
       }
     } else if (Config.timerStyle === "mini") {
       if (Config.words === 0) {
-        $("#miniTimerAndLiveWpm .time").html(
-          `${TestLogic.input.history.length}`
-        );
+        miniTimerNumberElement.innerHTML = `${TestLogic.input.history.length}`;
       } else {
-        $("#miniTimerAndLiveWpm .time").html(
-          `${TestLogic.input.history.length}/${outof}`
-        );
+        miniTimerNumberElement.innerHTML = `${TestLogic.input.history.length}/${outof}`;
       }
     }
   } else if (Config.mode == "zen") {
     if (Config.timerStyle === "text") {
-      $("#timerNumber").html(
-        "<div>" + `${TestLogic.input.history.length}` + "</div>"
-      );
+      timerNumberElement.innerHTML =
+        "<div>" + `${TestLogic.input.history.length}` + "</div>";
     } else {
-      $("#miniTimerAndLiveWpm .time").html(`${TestLogic.input.history.length}`);
+      miniTimerNumberElement.innerHTML = `${TestLogic.input.history.length}`;
     }
   }
+}
+
+export function updateStyle() {
+  if (!TestLogic.active) return;
+  hide();
+  update();
+  setTimeout(() => {
+    show();
+  }, 125);
 }

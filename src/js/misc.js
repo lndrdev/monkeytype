@@ -1,5 +1,6 @@
 import * as Loader from "./loader";
 import Config from "./config";
+import * as TestLogic from "./test-logic";
 
 function hexToHSL(H) {
   // Convert hex to RGB first
@@ -104,6 +105,13 @@ export async function getFunboxList() {
   }
 }
 
+export async function getFunbox(funbox) {
+  let list = await getFunboxList();
+  return list.find(function (element) {
+    return element.name == funbox;
+  });
+}
+
 let quotes = null;
 export async function getQuotes(language) {
   if (quotes === null || quotes.language !== language.replace(/_\d*k$/g, "")) {
@@ -173,6 +181,30 @@ export async function getFontsList() {
     });
   } else {
     return fontsList;
+  }
+}
+
+let supportersList = null;
+export async function getSupportersList() {
+  if (supportersList == null) {
+    return $.getJSON("about/supporters.json", function (data) {
+      supportersList = data;
+      return supportersList;
+    });
+  } else {
+    return supportersList;
+  }
+}
+
+let contributorsList = null;
+export async function getContributorsList() {
+  if (contributorsList == null) {
+    return $.getJSON("about/contributors.json", function (data) {
+      contributorsList = data;
+      return contributorsList;
+    });
+  } else {
+    return contributorsList;
   }
 }
 
@@ -544,6 +576,21 @@ export function getASCII() {
   return ret;
 }
 
+export function getArrows() {
+  let arrowWord = "";
+  let arrowArray = ["←", "↑", "→", "↓"];
+  let lastchar;
+  for (let i = 0; i < 5; i++) {
+    let random = arrowArray[Math.floor(Math.random() * arrowArray.length)];
+    while (random === lastchar) {
+      random = arrowArray[Math.floor(Math.random() * arrowArray.length)];
+    }
+    lastchar = random;
+    arrowWord += random;
+  }
+  return arrowWord;
+}
+
 export function getPositionString(number) {
   let numend = "th";
   let t = number % 10;
@@ -654,7 +701,7 @@ export function cleanTypographySymbols(textToClean) {
     " ": " ",
   };
   return textToClean.replace(
-    /[“”’‘—,…«»–   ]/g,
+    /[“”’‘—,…«»–\u2007\u202F\u00A0]/g,
     (char) => specials[char] || ""
   );
 }
@@ -723,9 +770,44 @@ export function regexIndexOf(string, regex, startpos) {
   return indexOf >= 0 ? indexOf + (startpos || 0) : indexOf;
 }
 
+export function convertRGBtoHEX(rgb) {
+  rgb = rgb.match(/^rgb\((\d+), \s*(\d+), \s*(\d+)\)$/);
+  if (rgb === null) return;
+  if (rgb.length < 3) return;
+  function hexCode(i) {
+    // Take the last 2 characters and convert
+    // them to Hexadecimal.
+
+    return ("0" + parseInt(i).toString(16)).slice(-2);
+  }
+  return "#" + hexCode(rgb[1]) + hexCode(rgb[2]) + hexCode(rgb[3]);
+}
+
 String.prototype.lastIndexOfRegex = function (regex) {
   var match = this.match(regex);
   return match ? this.lastIndexOf(match[match.length - 1]) : -1;
 };
 
 export const trailingComposeChars = /[\u02B0-\u02FF`´^¨~]+$|⎄.*$/;
+
+export function getMode2(mode) {
+  if (!mode) mode = Config.mode;
+  let mode2 = "";
+  if (mode === "time") {
+    mode2 = Config.time;
+  } else if (mode === "words") {
+    mode2 = Config.words;
+  } else if (mode === "custom") {
+    mode2 = "custom";
+  } else if (mode === "zen") {
+    mode2 = "zen";
+  } else if (mode === "quote") {
+    mode2 = TestLogic.randomQuote.id;
+  }
+  return mode2;
+}
+
+//https://stackoverflow.com/questions/36532307/rem-px-in-javascript
+export function convertRemToPixels(rem) {
+  return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+}

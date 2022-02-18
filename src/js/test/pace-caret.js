@@ -1,6 +1,9 @@
 import * as TestLogic from "./test-logic";
 import * as TestUI from "./test-ui";
 import Config from "./config";
+import * as TestTimer from "./test-timer";
+import * as Misc from "./misc";
+import * as UI from "./ui";
 
 export let settings = null;
 
@@ -13,8 +16,10 @@ function resetCaretPosition() {
 
   let caret = $("#paceCaret");
   let firstLetter = document
-    .querySelector("#words .word")
-    .querySelector("letter");
+    ?.querySelector("#words .word")
+    ?.querySelector("letter");
+
+  if (!firstLetter) return;
 
   caret.stop(true, true).animate(
     {
@@ -28,16 +33,7 @@ function resetCaretPosition() {
 
 export async function init() {
   $("#paceCaret").addClass("hidden");
-  let mode2 = "";
-  if (Config.mode === "time") {
-    mode2 = Config.time;
-  } else if (Config.mode === "words") {
-    mode2 = Config.words;
-  } else if (Config.mode === "custom") {
-    mode2 = "custom";
-  } else if (Config.mode === "quote") {
-    mode2 = TestLogic.randomQuote.id;
-  }
+  let mode2 = Misc.getMode2();
   let wpm;
   if (Config.paceCaret === "custom") {
     wpm = Config.paceCaretCustomSpeed;
@@ -165,7 +161,7 @@ export function update(expectedStepEnd) {
         {
           left: newLeft,
         },
-        duration,
+        TestTimer.slowTimer ? 0 : duration,
         "linear"
       );
     } else {

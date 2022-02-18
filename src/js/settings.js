@@ -8,6 +8,8 @@ import * as Notifications from "./notifications";
 import * as Funbox from "./funbox";
 import * as SimplePopups from "./simple-popups";
 import * as ThemePicker from "./theme-picker";
+import * as ImportExportSettingsPopup from "./import-export-settings-popup";
+import * as CustomThemePopup from "./custom-theme-popup";
 
 export let groups = {};
 async function initGroups() {
@@ -131,6 +133,10 @@ async function initGroups() {
     "singleListCommandLine",
     UpdateConfig.setSingleListCommandLine
   );
+  groups.capsLockWarning = new SettingsGroup(
+    "capsLockWarning",
+    UpdateConfig.setCapsLockWarning
+  );
   groups.flipTestColors = new SettingsGroup(
     "flipTestColors",
     UpdateConfig.setFlipTestColors
@@ -162,9 +168,17 @@ async function initGroups() {
       groups.confidenceMode.updateButton();
     }
   );
+  groups.soundVolume = new SettingsGroup(
+    "soundVolume",
+    UpdateConfig.setSoundVolume,
+    () => {}
+  );
   groups.playSoundOnError = new SettingsGroup(
     "playSoundOnError",
-    UpdateConfig.setPlaySoundOnError
+    UpdateConfig.setPlaySoundOnError,
+    () => {
+      if (Config.playSoundOnError) Sound.playError();
+    }
   );
   groups.playSoundOnClick = new SettingsGroup(
     "playSoundOnClick",
@@ -255,7 +269,17 @@ async function initGroups() {
   // );
 }
 
-async function fillSettingsPage() {
+export function reset() {
+  $(".pageSettings .section.themes .favThemes.buttons").empty();
+  $(".pageSettings .section.themes .allThemes.buttons").empty();
+  $(".pageSettings .section.languageGroups .buttons").empty();
+  $(".pageSettings .section.layout .buttons").empty();
+  $(".pageSettings .section.keymapLayout .buttons").empty();
+  $(".pageSettings .section.funbox .buttons").empty();
+  $(".pageSettings .section.fontFamily .buttons").empty();
+}
+
+export async function fillSettingsPage() {
   await initGroups();
   await UpdateConfig.loadPromise;
   ThemePicker.refreshButtons();
@@ -364,7 +388,7 @@ async function fillSettingsPage() {
   );
 }
 
-export let settingsFillPromise = fillSettingsPage();
+// export let settingsFillPromise = fillSettingsPage();
 
 function setActiveFunboxButton() {
   $(`.pageSettings .section.funbox .button`).removeClass("active");
@@ -383,6 +407,7 @@ export function update() {
   ThemePicker.updateActiveTab();
   ThemePicker.setCustomInputs();
   ThemePicker.refreshButtons();
+  // ThemePicker.updateActiveButton();
 
   $(".pageSettings .section.paceCaret input.customPaceCaretSpeed").val(
     Config.paceCaretCustomSpeed
@@ -454,7 +479,7 @@ $(document).on(
   "click",
   ".pageSettings .section.paceCaret .button.save",
   (e) => {
-    UpdateConfig.setMinBurstCustomSpeed(
+    UpdateConfig.setPaceCaretCustomSpeed(
       parseInt(
         $(".pageSettings .section.paceCaret input.customPaceCaretSpeed").val()
       )
@@ -473,7 +498,7 @@ $(document).on(
 );
 
 $(document).on("click", ".pageSettings .section.minWpm .button.save", (e) => {
-  UpdateConfig.setMinBurstCustomSpeed(
+  UpdateConfig.setMinWpmCustomSpeed(
     parseInt($(".pageSettings .section.minWpm input.customMinWpmSpeed").val())
   );
 });
@@ -489,7 +514,7 @@ $(document).on(
 );
 
 $(document).on("click", ".pageSettings .section.minAcc .button.save", (e) => {
-  UpdateConfig.setMinBurstCustomSpeed(
+  UpdateConfig.setMinAccCustom(
     parseInt($(".pageSettings .section.minAcc input.customMinAcc").val())
   );
 });
@@ -531,6 +556,10 @@ $("#resetSettingsButton").click((e) => {
   SimplePopups.list.resetSettings.show();
 });
 
+$("#importSettingsButton").click((e) => {
+  ImportExportSettingsPopup.show("import");
+});
+
 $("#exportSettingsButton").click((e) => {
   let configJSON = JSON.stringify(Config);
   navigator.clipboard.writeText(configJSON).then(
@@ -538,10 +567,30 @@ $("#exportSettingsButton").click((e) => {
       Notifications.add("JSON Copied to clipboard", 0);
     },
     function (err) {
-      Notifications.add(
-        "Something went wrong when copying the settings JSON: " + err,
-        -1
-      );
+      ImportExportSettingsPopup.show("export");
+    }
+  );
+});
+
+$("#shareCustomThemeButton").click((e) => {
+  let share = [];
+  $.each(
+    $(".pageSettings .section.customTheme [type='color']"),
+    (index, element) => {
+      share.push($(element).attr("value"));
+    }
+  );
+
+  let url =
+    "https://monkeytype.com?" +
+    Misc.objectToQueryString({ customTheme: share });
+
+  navigator.clipboard.writeText(url).then(
+    function () {
+      Notifications.add("URL Copied to clipboard", 0);
+    },
+    function (err) {
+      CustomThemePopup.show(url);
     }
   );
 });
@@ -550,42 +599,46 @@ $(".pageSettings .sectionGroupTitle").click((e) => {
   toggleSettingsGroup($(e.currentTarget).attr("group"));
 });
 
-$(".pageSettings .section.customBackgroundSize .inputAndSave .save").on(
+$(".pageSettings .section.customBackgroundSize .inputAndButton .save").on(
   "click",
   (e) => {
     UpdateConfig.setCustomBackground(
-      $(".pageSettings .section.customBackgroundSize .inputAndSave input").val()
+      $(
+        ".pageSettings .section.customBackgroundSize .inputAndButton input"
+      ).val()
     );
   }
 );
 
-$(".pageSettings .section.customBackgroundSize .inputAndSave input").keypress(
+$(".pageSettings .section.customBackgroundSize .inputAndButton input").keypress(
   (e) => {
     if (e.keyCode == 13) {
       UpdateConfig.setCustomBackground(
         $(
-          ".pageSettings .section.customBackgroundSize .inputAndSave input"
+          ".pageSettings .section.customBackgroundSize .inputAndButton input"
         ).val()
       );
     }
   }
 );
 
-$(".pageSettings .section.customLayoutfluid .inputAndSave .save").on(
+$(".pageSettings .section.customLayoutfluid .inputAndButton .save").on(
   "click",
   (e) => {
     UpdateConfig.setCustomLayoutfluid(
-      $(".pageSettings .section.customLayoutfluid .inputAndSave input").val()
+      $(".pageSettings .section.customLayoutfluid .inputAndButton input").val()
     );
     Notifications.add("Custom layoutfluid saved", 1);
   }
 );
 
-$(".pageSettings .section.customLayoutfluid .inputAndSave .input").keypress(
+$(".pageSettings .section.customLayoutfluid .inputAndButton .input").keypress(
   (e) => {
     if (e.keyCode == 13) {
       UpdateConfig.setCustomLayoutfluid(
-        $(".pageSettings .section.customLayoutfluid .inputAndSave input").val()
+        $(
+          ".pageSettings .section.customLayoutfluid .inputAndButton input"
+        ).val()
       );
       Notifications.add("Custom layoutfluid saved", 1);
     }

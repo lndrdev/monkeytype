@@ -30,6 +30,10 @@
     gap: 2rem;
   }
 
+  .sendVerificationEmail {
+    cursor: pointer;
+  }
+
   .timePbTable,
   .wordsPbTable {
     .sub {
@@ -81,12 +85,6 @@
     top: 0;
   }
 
-  .preloader {
-    font-size: 2rem;
-    justify-self: center;
-    color: var(--main-color);
-  }
-
   .doublegroup {
     display: grid;
     grid-auto-flow: column;
@@ -120,6 +118,14 @@
     &.createdDate {
       text-align: center;
       color: var(--sub-color);
+    }
+
+    &.personalBestTables {
+      .tables {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+      }
     }
 
     &.history {
@@ -158,6 +164,10 @@
     .val {
       font-size: 3rem;
       line-height: 3.5rem;
+    }
+
+    .chartjs-render-monitor {
+      width: 100% !important;
     }
 
     &.chart {
@@ -199,6 +209,9 @@
           display: grid;
           gap: 0.5rem;
         }
+      }
+      .chart {
+        height: 400px;
       }
       .chartPreloader {
         position: absolute;

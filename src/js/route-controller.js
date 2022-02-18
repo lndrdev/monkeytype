@@ -17,6 +17,7 @@ export function handleInitialPageClasses(hash) {
   let el = $(".page." + mappedRoutes[hash]);
   $(el).removeClass("hidden");
   $(el).addClass("active");
+  UI.setActivePage(mappedRoutes[hash]);
 }
 
 (function (history) {

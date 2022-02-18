@@ -9,6 +9,9 @@ const buffer = require("vinyl-buffer");
 const vinylPaths = require("vinyl-paths");
 const eslint = require("gulp-eslint");
 var sass = require("gulp-sass")(require("dart-sass"));
+const replace = require("gulp-replace");
+const uglify = require("gulp-uglify");
+const through2 = require("through2");
 // sass.compiler = require("dart-sass");
 
 let eslintConfig = {
@@ -106,18 +109,20 @@ const refactoredSrc = [
   "./src/js/elements/notifications.js",
   "./src/js/elements/loader.js",
   "./src/js/elements/about-page.js",
-  "./src/js/elements/psa.js",
   "./src/js/elements/new-version-notification.js",
+  "./src/js/elements/mobile-test-config.js",
+  "./src/js/elements/scroll-to-top.js",
 
   "./src/js/popups/custom-text-popup.js",
   "./src/js/popups/quote-search-popup.js",
   "./src/js/popups/version-popup.js",
   "./src/js/popups/support-popup.js",
+  "./src/js/popups/contact-popup.js",
   "./src/js/popups/custom-word-amount-popup.js",
   "./src/js/popups/custom-test-duration-popup.js",
   "./src/js/popups/word-filter-popup.js",
   "./src/js/popups/custom-theme-popup.js",
-  "./src/js/popups/import-settings-popup.js",
+  "./src/js/popups/import-export-settings-popup.js",
   "./src/js/popups/custom-background-filter.js",
 
   "./src/js/settings/language-picker.js",
@@ -136,6 +141,7 @@ const refactoredSrc = [
   "./src/js/test/practise-words.js",
   "./src/js/test/test-ui.js",
   "./src/js/test/keymap.js",
+  "./src/js/test/result.js",
   "./src/js/test/live-wpm.js",
   "./src/js/test/caps-warning.js",
   "./src/js/test/live-acc.js",
@@ -149,6 +155,7 @@ const refactoredSrc = [
   "./src/js/test/test-config.js",
   "./src/js/test/layout-emulator.js",
   "./src/js/test/poetry.js",
+  "./src/js/test/wikipedia.js",
   "./src/js/test/today-tracker.js",
   "./src/js/test/weak-spot.js",
   "./src/js/test/wordset.js",
@@ -206,6 +213,11 @@ task("browserify", function () {
     .bundle()
     .pipe(source("monkeytype.js"))
     .pipe(buffer())
+    .pipe(
+      uglify({
+        mangle: false,
+      })
+    )
     .pipe(dest("./dist/js"));
 });
 
@@ -223,9 +235,49 @@ task("clean", function () {
   return src("./dist/", { allowEmpty: true }).pipe(vinylPaths(del));
 });
 
+task("updateSwCacheName", function () {
+  let date = new Date();
+  let dateString =
+    date.getFullYear() +
+    "-" +
+    (date.getMonth() + 1) +
+    "-" +
+    date.getDate() +
+    "-" +
+    date.getHours() +
+    "-" +
+    date.getMinutes() +
+    "-" +
+    date.getSeconds();
+  return src(["static/sw.js"])
+    .pipe(
+      replace(
+        /const staticCacheName = .*;/g,
+        `const staticCacheName = "sw-cache-${dateString}";`
+      )
+    )
+    .pipe(
+      through2.obj(function (file, enc, cb) {
+        var date = new Date();
+        file.stat.atime = date;
+        file.stat.mtime = date;
+        cb(null, file);
+      })
+    )
+    .pipe(dest("./dist/"));
+});
+
 task(
   "compile",
-  series("lint", "cat", "copy-modules", "browserify", "static", "sass")
+  series(
+    "lint",
+    "cat",
+    "copy-modules",
+    "browserify",
+    "static",
+    "sass",
+    "updateSwCacheName"
+  )
 );
 
 task("watch", function () {

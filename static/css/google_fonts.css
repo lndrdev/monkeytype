@@ -317,3 +317,17 @@
        url('../fonts/jetbrains-mono-v6-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
        url('../fonts/jetbrains-mono-v6-latin-regular.svg#JetBrainsMono') format('svg'); /* Legacy iOS */
 }
+
+/* noto-naskh-arabic-regular - arabic */
+@font-face {
+  font-family: 'Noto Naskh Arabic';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/noto-naskh-arabic-v16-arabic-regular.eot'); /* IE9 Compat Modes */
+  src: local(''),
+    url('../fonts/noto-naskh-arabic-v16-arabic-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('../fonts/noto-naskh-arabic-v16-arabic-regular.woff2') format('woff2'), /* Super Modern Browsers */
+    url('../fonts/noto-naskh-arabic-v16-arabic-regular.woff') format('woff'), /* Modern Browsers */
+    url('../fonts/noto-naskh-arabic-v16-arabic-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+    url('../fonts/noto-naskh-arabic-v16-arabic-regular.svg#NotoNaskhArabic') format('svg'); /* Legacy iOS */
+}

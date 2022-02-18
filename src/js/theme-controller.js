@@ -4,6 +4,7 @@ import * as Misc from "./misc";
 import Config from "./config";
 import * as UI from "./ui";
 import tinycolor from "tinycolor2";
+import * as BackgroundFilter from "./custom-background-filter";
 
 let isPreviewingTheme = false;
 export let randomTheme = null;
@@ -136,6 +137,7 @@ export function set(themeName) {
 export function clearPreview() {
   if (isPreviewingTheme) {
     isPreviewingTheme = false;
+    randomTheme = null;
     if (Config.customTheme) {
       apply("custom");
     } else {
@@ -178,23 +180,6 @@ export function clearRandom() {
   randomTheme = null;
 }
 
-export function applyCustomBackground() {
-  // $(".customBackground").css({
-  //   backgroundImage: `url(${Config.customBackground})`,
-  //   backgroundAttachment: "fixed",
-  // });
-  if (Config.customBackground === "") {
-    $("#words").removeClass("noErrorBorder");
-    $(".customBackground img").remove();
-  } else {
-    $("#words").addClass("noErrorBorder");
-    let $img = $("<img>", {
-      src: Config.customBackground,
-    });
-    $(".customBackground").html($img);
-  }
-}
-
 export function applyCustomBackgroundSize() {
   if (Config.customBackgroundSize == "max") {
     $(".customBackground img").css({
@@ -206,5 +191,26 @@ export function applyCustomBackgroundSize() {
     $(".customBackground img").css({
       objectFit: Config.customBackgroundSize,
     });
+  }
+}
+
+export function applyCustomBackground() {
+  // $(".customBackground").css({
+  //   backgroundImage: `url(${Config.customBackground})`,
+  //   backgroundAttachment: "fixed",
+  // });
+  if (Config.customBackground === "") {
+    $("#words").removeClass("noErrorBorder");
+    $("#resultWordsHistory").removeClass("noErrorBorder");
+    $(".customBackground img").remove();
+  } else {
+    $("#words").addClass("noErrorBorder");
+    $("#resultWordsHistory").addClass("noErrorBorder");
+    let $img = $("<img>", {
+      src: Config.customBackground,
+    });
+    $(".customBackground").html($img);
+    BackgroundFilter.apply();
+    applyCustomBackgroundSize();
   }
 }

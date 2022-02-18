@@ -5,6 +5,7 @@ import * as TestStats from "./test-stats";
 
 export let invalid = false;
 export let start, end;
+export let start2, end2;
 export let wpmHistory = [];
 export let rawHistory = [];
 export let burstHistory = [];
@@ -157,10 +158,12 @@ export function calculateTestSeconds(now) {
 
 export function setEnd(e) {
   end = e;
+  end2 = Date.now();
 }
 
 export function setStart(s) {
   start = s;
+  start2 = Date.now();
 }
 
 export function updateLastKeypress() {
@@ -234,6 +237,9 @@ export function calculateBurst() {
   let wordLength;
   if (Config.mode === "zen") {
     wordLength = TestLogic.input.current.length;
+    if (wordLength == 0) {
+      wordLength = TestLogic.input.getHistoryLast().length;
+    }
   } else {
     wordLength = TestLogic.words.getCurrent().length;
   }
@@ -251,7 +257,8 @@ export function pushBurstToHistory(speed) {
 }
 
 export function calculateAccuracy() {
-  return (accuracy.correct / (accuracy.correct + accuracy.incorrect)) * 100;
+  let acc = (accuracy.correct / (accuracy.correct + accuracy.incorrect)) * 100;
+  return isNaN(acc) ? 100 : acc;
 }
 
 export function incrementAccuracy(correctincorrect) {
@@ -396,7 +403,7 @@ function countChars() {
       spaces++;
     }
   }
-  if (Config.funbox === "nospace") {
+  if (Config.funbox === "nospace" || Config.funbox === "arrows") {
     spaces = 0;
     correctspaces = 0;
   }
@@ -413,11 +420,11 @@ function countChars() {
 }
 
 export function calculateStats() {
-  let testSeconds;
-  if (Config.mode == "custom") {
-    testSeconds = TestStats.calculateTestSeconds();
-  } else {
-    testSeconds = Misc.roundTo2(TestStats.calculateTestSeconds());
+  let testSeconds = TestStats.calculateTestSeconds();
+  console.log((TestStats.end2 - TestStats.start2) / 1000);
+  console.log(testSeconds);
+  if (Config.mode != "custom") {
+    testSeconds = Misc.roundTo2(testSeconds);
   }
   let chars = countChars();
   let wpm = Misc.roundTo2(
