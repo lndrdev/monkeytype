@@ -2,7 +2,9 @@ import * as Funbox from "../test/funbox";
 import * as PageController from "../controllers/page-controller";
 import Config from "../config";
 import * as ActivePage from "../states/active-page";
-import * as TestLogic from "../test/test-logic";
+import * as PageTest from "../pages/test";
+import * as PageAbout from "../pages/about";
+import * as Settings from "../pages/settings";
 
 const mappedRouteClasses = {
   "": "pageTest",
@@ -16,6 +18,12 @@ const mappedRoutePages = {
   "#about": "about",
 };
 
+const mappedRoutePageObjects = {
+  "": PageTest.page,
+  "#settings": Settings.page,
+  "#about": PageAbout.page,
+};
+
 export function handleInitialPageClasses(hash) {
   if (hash.match(/^#group_/)) hash = "#settings";
   if (!mappedRouteClasses[hash]) {
@@ -25,9 +33,7 @@ export function handleInitialPageClasses(hash) {
   $(el).removeClass("hidden");
   $(el).addClass("active");
   ActivePage.set(mappedRoutePages[hash]);
-  if (mappedRoutePages[hash] === "test") {
-    TestLogic.restart();
-  }
+  mappedRoutePageObjects[hash].beforeShow();
 }
 
 (function (history) {
