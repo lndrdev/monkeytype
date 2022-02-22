@@ -16,13 +16,14 @@ ConfigEvent.subscribe((eventKey) => {
       "minBurst",
       "confidenceMode",
       "layout",
+      "showAvg",
     ].includes(eventKey)
   ) {
     update();
   }
 });
 
-export function update(): void {
+export async function update(): Promise<void> {
   let anim = false;
   if ($(".pageTest #testModesNotice").text() === "") anim = true;
 

@@ -7,7 +7,7 @@
     "start:dev": "cd frontend && npm run start:dev",
     "deploy:live": "cd frontend && npm run deploy:live",
     "install:all": "sh ./bin/install.sh",
-    "install:all:windows": ".\\bin\\install.cmd",
+    "install:windows": ".\\bin\\install.cmd",
     "lint": "run-script-os",
     "lint:windows": ".\\node_modules\\.bin\\eslint \"./backend/**/*.{ts,js}\" \"./frontend/src/scripts/**/*.{ts,js}\"",
     "lint:default": "./node_modules/.bin/eslint './backend/**/*.{ts,js}' './frontend/src/scripts/**/*.{ts,js}'",

@@ -1,5 +1,5 @@
-npm install
+call npm install
 cd .\frontend
-npm install
+call npm install
 cd ..\
 PAUSE
