@@ -1,9 +1,9 @@
-let activePage = "test";
+let activePage: MonkeyTypes.Page | undefined = "test";
 
-export function get(): string {
+export function get(): MonkeyTypes.Page | undefined {
   return activePage;
 }
 
-export function set(active: string): void {
+export function set(active: MonkeyTypes.Page | undefined): void {
   activePage = active;
 }

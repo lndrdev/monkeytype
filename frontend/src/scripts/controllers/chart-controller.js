@@ -3,6 +3,8 @@ import * as TestInput from "../test/test-input";
 import * as ThemeColors from "../elements/theme-colors";
 import * as ConfigEvent from "../observables/config-event";
 
+Chart.defaults.global.animation.duration = 250;
+
 export let result = new Chart($("#wpmChart"), {
   type: "line",
   data: {
@@ -253,7 +255,7 @@ export async function updateColors(chart) {
   //   },
   // });
 
-  chart.update({ duration: 250 });
+  chart.update();
 }
 
 Chart.prototype.updateColors = function () {

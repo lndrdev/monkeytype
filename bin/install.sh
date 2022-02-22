@@ -1,4 +1,3 @@
-npm ci &
-cd ./frontend && npm ci &
-cd ./backend && npm ci &
+npm install &
+cd ./frontend && npm install &
 wait

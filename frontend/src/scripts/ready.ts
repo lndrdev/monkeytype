@@ -36,7 +36,7 @@ $(document).ready(() => {
       "images/merchdropwebsite2.png",
       false,
       () => {
-        window.localStorage.setItem("merchbannerclosed", true);
+        window.localStorage.setItem("merchbannerclosed", "true");
       }
     );
   }
@@ -45,7 +45,7 @@ $(document).ready(() => {
     .removeClass("hidden")
     .stop(true, true)
     .animate({ opacity: 1 }, 250, () => {
-      if (/challenge_.+/g.test(window.location.hash)) {
+      if (/challenge_.+/g.test(window.location.pathname)) {
         //do nothing
         // }
       } else if (window.location.hash !== "") {

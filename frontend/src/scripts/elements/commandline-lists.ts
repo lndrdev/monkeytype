@@ -1504,7 +1504,7 @@ const commandsTimerColor: MonkeyTypes.CommandsGroup = {
       display: "black",
       configValue: "black",
       exec: (): void => {
-        UpdateConfig.setTimerColor("bar");
+        UpdateConfig.setTimerColor("black");
       },
     },
     {
@@ -1589,7 +1589,7 @@ const commandsTimerOpacity: MonkeyTypes.CommandsGroup = {
       display: ".25",
       configValue: 0.25,
       exec: (): void => {
-        UpdateConfig.setTimerOpacity(0.25);
+        UpdateConfig.setTimerOpacity("0.25");
       },
     },
     {
@@ -1597,7 +1597,7 @@ const commandsTimerOpacity: MonkeyTypes.CommandsGroup = {
       display: ".5",
       configValue: 0.5,
       exec: (): void => {
-        UpdateConfig.setTimerOpacity(0.5);
+        UpdateConfig.setTimerOpacity("0.5");
       },
     },
     {
@@ -1605,7 +1605,7 @@ const commandsTimerOpacity: MonkeyTypes.CommandsGroup = {
       display: ".75",
       configValue: 0.75,
       exec: (): void => {
-        UpdateConfig.setTimerOpacity(0.75);
+        UpdateConfig.setTimerOpacity("0.75");
       },
     },
     {
@@ -1613,7 +1613,7 @@ const commandsTimerOpacity: MonkeyTypes.CommandsGroup = {
       display: "1",
       configValue: 1,
       exec: (): void => {
-        UpdateConfig.setTimerOpacity(1);
+        UpdateConfig.setTimerOpacity("1");
       },
     },
   ],
@@ -1629,7 +1629,7 @@ const commandsWordCount: MonkeyTypes.CommandsGroup = {
       configValue: 10,
       exec: (): void => {
         UpdateConfig.setMode("words");
-        UpdateConfig.setWordCount("10");
+        UpdateConfig.setWordCount(10);
         TestLogic.restart();
       },
     },
@@ -1639,7 +1639,7 @@ const commandsWordCount: MonkeyTypes.CommandsGroup = {
       configValue: 25,
       exec: (): void => {
         UpdateConfig.setMode("words");
-        UpdateConfig.setWordCount("25");
+        UpdateConfig.setWordCount(25);
         TestLogic.restart();
       },
     },
@@ -1649,7 +1649,7 @@ const commandsWordCount: MonkeyTypes.CommandsGroup = {
       configValue: 50,
       exec: (): void => {
         UpdateConfig.setMode("words");
-        UpdateConfig.setWordCount("50");
+        UpdateConfig.setWordCount(50);
         TestLogic.restart();
       },
     },
@@ -1659,7 +1659,7 @@ const commandsWordCount: MonkeyTypes.CommandsGroup = {
       configValue: 100,
       exec: (): void => {
         UpdateConfig.setMode("words");
-        UpdateConfig.setWordCount("100");
+        UpdateConfig.setWordCount(100);
         TestLogic.restart();
       },
     },
@@ -1669,7 +1669,7 @@ const commandsWordCount: MonkeyTypes.CommandsGroup = {
       configValue: 200,
       exec: (): void => {
         UpdateConfig.setMode("words");
-        UpdateConfig.setWordCount("200");
+        UpdateConfig.setWordCount(200);
         TestLogic.restart();
       },
     },
@@ -1906,7 +1906,7 @@ const commandsTimeConfig: MonkeyTypes.CommandsGroup = {
       configValue: 15,
       exec: (): void => {
         UpdateConfig.setMode("time");
-        UpdateConfig.setTimeConfig("15");
+        UpdateConfig.setTimeConfig(15);
         TestLogic.restart();
       },
     },
@@ -1916,7 +1916,7 @@ const commandsTimeConfig: MonkeyTypes.CommandsGroup = {
       configValue: 30,
       exec: (): void => {
         UpdateConfig.setMode("time");
-        UpdateConfig.setTimeConfig("30");
+        UpdateConfig.setTimeConfig(30);
         TestLogic.restart();
       },
     },
@@ -1926,7 +1926,7 @@ const commandsTimeConfig: MonkeyTypes.CommandsGroup = {
       configValue: 60,
       exec: (): void => {
         UpdateConfig.setMode("time");
-        UpdateConfig.setTimeConfig("60");
+        UpdateConfig.setTimeConfig(60);
         TestLogic.restart();
       },
     },
@@ -1936,7 +1936,7 @@ const commandsTimeConfig: MonkeyTypes.CommandsGroup = {
       configValue: 120,
       exec: (): void => {
         UpdateConfig.setMode("time");
-        UpdateConfig.setTimeConfig("120");
+        UpdateConfig.setTimeConfig(120);
         TestLogic.restart();
       },
     },
@@ -2024,7 +2024,7 @@ const commandsFontSize: MonkeyTypes.CommandsGroup = {
       display: "1x",
       configValue: 1,
       exec: (): void => {
-        UpdateConfig.setFontSize(1);
+        UpdateConfig.setFontSize("1");
         TestLogic.restart();
       },
     },
@@ -2033,7 +2033,7 @@ const commandsFontSize: MonkeyTypes.CommandsGroup = {
       display: "1.25x",
       configValue: 125,
       exec: (): void => {
-        UpdateConfig.setFontSize(125);
+        UpdateConfig.setFontSize("125");
         TestLogic.restart();
       },
     },
@@ -2042,7 +2042,7 @@ const commandsFontSize: MonkeyTypes.CommandsGroup = {
       display: "1.5x",
       configValue: 15,
       exec: (): void => {
-        UpdateConfig.setFontSize(15);
+        UpdateConfig.setFontSize("15");
         TestLogic.restart();
       },
     },
@@ -2051,7 +2051,7 @@ const commandsFontSize: MonkeyTypes.CommandsGroup = {
       display: "2x",
       configValue: 2,
       exec: (): void => {
-        UpdateConfig.setFontSize(2);
+        UpdateConfig.setFontSize("2");
         TestLogic.restart();
       },
     },
@@ -2060,7 +2060,7 @@ const commandsFontSize: MonkeyTypes.CommandsGroup = {
       display: "3x",
       configValue: 3,
       exec: (): void => {
-        UpdateConfig.setFontSize(3);
+        UpdateConfig.setFontSize("3");
         TestLogic.restart();
       },
     },
@@ -2069,7 +2069,7 @@ const commandsFontSize: MonkeyTypes.CommandsGroup = {
       display: "4x",
       configValue: 4,
       exec: (): void => {
-        UpdateConfig.setFontSize(4);
+        UpdateConfig.setFontSize("4");
         TestLogic.restart();
       },
     },

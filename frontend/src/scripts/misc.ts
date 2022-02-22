@@ -1,20 +1,23 @@
 import * as Loader from "./elements/loader";
 
-function hexToHSL(
-  hex: string
-): { hue: number; sat: number; lgt: number; string: string } {
+function hexToHSL(hex: string): {
+  hue: number;
+  sat: number;
+  lgt: number;
+  string: string;
+} {
   // Convert hex to RGB first
   let r: number;
   let g: number;
   let b: number;
   if (hex.length == 4) {
-    r = (("0x" + hex[1] + hex[1]) as unknown) as number;
-    g = (("0x" + hex[2] + hex[2]) as unknown) as number;
-    b = (("0x" + hex[3] + hex[3]) as unknown) as number;
+    r = ("0x" + hex[1] + hex[1]) as unknown as number;
+    g = ("0x" + hex[2] + hex[2]) as unknown as number;
+    b = ("0x" + hex[3] + hex[3]) as unknown as number;
   } else if (hex.length == 7) {
-    r = (("0x" + hex[1] + hex[2]) as unknown) as number;
-    g = (("0x" + hex[3] + hex[4]) as unknown) as number;
-    b = (("0x" + hex[5] + hex[6]) as unknown) as number;
+    r = ("0x" + hex[1] + hex[2]) as unknown as number;
+    g = ("0x" + hex[3] + hex[4]) as unknown as number;
+    b = ("0x" + hex[5] + hex[6]) as unknown as number;
   } else {
     r = 0x00;
     g = 0x00;
@@ -338,8 +341,7 @@ export async function getChallengeList(): Promise<Challenge[]> {
 export function smooth(
   arr: number[],
   windowSize: number,
-  getter = (value: number): number => value,
-  setter: (index: number, value: number) => number
+  getter = (value: number): number => value
 ): number[] {
   const get = getter;
   const result = [];
@@ -356,7 +358,7 @@ export function smooth(
       count += 1;
     }
 
-    result[i] = setter ? setter(arr[i], sum / count) : sum / count;
+    result[i] = sum / count;
   }
 
   return result;
@@ -395,7 +397,9 @@ export function median(arr: number[]): number {
   }
 }
 
-export async function getReleasesFromGitHub(): Promise<object> {
+export async function getReleasesFromGitHub(): Promise<
+  MonkeyTypes.GithubRelease[]
+> {
   return $.getJSON("releases.json", (data) => {
       $("#bottom .version .text").text(data[0].name);
       $("#bottom .version").css("opacity", 1);
@@ -936,4 +940,79 @@ export function getMode2(
     mode2 = randomQuote.id.toString();
   }
   return mode2;
+}
+
+export async function downloadResultsCSV(
+  array: MonkeyTypes.Result<MonkeyTypes.Mode>[]
+): Promise<void> {
+  Loader.show();
+  const csvString = [
+    [
+      "_id",
+      "isPb",
+      "wpm",
+      "acc",
+      "rawWpm",
+      "consistency",
+      "charStats",
+      "mode",
+      "mode2",
+      "quoteLength",
+      "restartCount",
+      "testDuration",
+      "afkDuration",
+      "incompleteTestSeconds",
+      "punctuation",
+      "numbers",
+      "language",
+      "funbox",
+      "difficulty",
+      "lazyMode",
+      "blindMode",
+      "bailedOut",
+      "tags",
+      "timestamp",
+    ],
+    ...array.map((item: MonkeyTypes.Result<MonkeyTypes.Mode>) => [
+      item._id,
+      item.isPb,
+      item.wpm,
+      item.acc,
+      item.rawWpm,
+      item.consistency,
+      item.charStats.join(","),
+      item.mode,
+      item.mode2,
+      item.quoteLength,
+      item.restartCount,
+      item.testDuration,
+      item.afkDuration,
+      item.incompleteTestSeconds,
+      item.punctuation,
+      item.numbers,
+      item.language,
+      item.funbox,
+      item.difficulty,
+      item.lazyMode,
+      item.blindMode,
+      item.bailedOut,
+      item.tags.join(","),
+      item.timestamp,
+    ]),
+  ]
+    .map((e) => e.join("|"))
+    .join("\n");
+
+  const blob = new Blob([csvString], { type: "text/csv" });
+
+  const href = window.URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.setAttribute("href", href);
+  link.setAttribute("download", "results.csv");
+  document.body.appendChild(link); // Required for FF
+
+  link.click();
+  link.remove();
+  Loader.hide();
 }

@@ -47,6 +47,13 @@
       }
     }
   }
+  #leaderboardsWrapper #leaderboards {
+    .tables table {
+      tr td:nth-child(5) {
+        display: none;
+      }
+    }
+  }
 }
 
 @media only screen and (max-width: 900px) {
@@ -74,6 +81,11 @@
     }
     .text {
       padding: 0.25rem 0;
+    }
+  }
+  .pageSettings {
+    .section.autoSwitchThemeInputs {
+      grid-template-columns: 1fr 3fr;
     }
   }
 }
@@ -194,6 +206,23 @@
 
   .pageSettings .section.fullWidth .buttons {
     grid-template-columns: 1fr 1fr;
+  }
+
+  #leaderboardsWrapper {
+    #leaderboards {
+      grid-template-rows: 2.5rem auto;
+      .leaderboardsTop {
+        flex-direction: column;
+        align-items: baseline;
+      }
+      .tables {
+        grid-template-columns: unset;
+      }
+      .tables .rightTableWrapper,
+      .tables .leftTableWrapper {
+        height: calc(50vh - 8rem);
+      }
+    }
   }
 }
 
@@ -387,26 +416,11 @@
   #commandLineInput {
     width: 400px !important;
   }
-
   #leaderboardsWrapper #leaderboards {
-    .tables .titleAndTable .titleAndButtons {
-      grid-template-columns: unset;
-    }
-    .tables table {
-      thead,
-      tbody,
-      tfoot {
-        font-size: 0.5rem;
-      }
-      tr td:first-child {
-        padding-left: 0.25rem;
-      }
-      tr td:last-child {
-        padding-right: 0.25rem;
-      }
-      td {
-        padding: 0.25rem;
-      }
+    width: 85vw;
+    .tables .rightTableWrapper,
+    .tables .leftTableWrapper {
+      height: calc(50vh - 7rem);
     }
   }
 }
@@ -447,6 +461,31 @@
   #commandLine,
   #commandLineInput {
     width: 300px !important;
+  }
+  #leaderboardsWrapper #leaderboards {
+    .tables .titleAndTable .titleAndButtons {
+      grid-template-columns: unset;
+    }
+    .tables table {
+      thead,
+      tbody,
+      tfoot {
+        // font-size: 0.5rem;
+      }
+      tr td:first-child {
+        padding-left: 0.25rem;
+      }
+      tr td:last-child {
+        padding-right: 0.25rem;
+      }
+      td {
+        padding: 0.25rem;
+      }
+    }
+    .tables .rightTableWrapper,
+    .tables .leftTableWrapper {
+      height: calc(50vh - 9rem);
+    }
   }
 }
 

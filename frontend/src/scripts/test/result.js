@@ -33,9 +33,8 @@ async function updateGraph() {
   }
   ChartController.result.updateColors();
   ChartController.result.data.labels = labels;
-  ChartController.result.options.scales.yAxes[0].scaleLabel.labelString = Config.alwaysShowCPM
-    ? "Character per Minute"
-    : "Words per Minute";
+  ChartController.result.options.scales.yAxes[0].scaleLabel.labelString =
+    Config.alwaysShowCPM ? "Character per Minute" : "Words per Minute";
   let chartData1 = Config.alwaysShowCPM
     ? TestInput.wpmHistory.map((a) => a * 5)
     : TestInput.wpmHistory;
@@ -108,7 +107,7 @@ async function updateGraph() {
   ChartController.result.options.scales.yAxes[0].ticks.max = maxChartVal;
   ChartController.result.options.scales.yAxes[1].ticks.max = maxChartVal;
 
-  ChartController.result.update({ duration: 0 });
+  ChartController.result.update();
   ChartController.result.resize();
 }
 

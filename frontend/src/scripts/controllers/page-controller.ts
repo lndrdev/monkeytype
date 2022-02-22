@@ -6,7 +6,7 @@ import * as PageTest from "../pages/test";
 import * as PageAbout from "../pages/about";
 import * as PageTransition from "../states/page-transition";
 
-export function change(page) {
+export function change(page: MonkeyTypes.Page | string): void {
   if (PageTransition.get()) {
     console.log(`change page ${page} stopped`);
     return;
@@ -16,14 +16,12 @@ export function change(page) {
   if (page === "") page = "test";
   if (page == undefined) {
     //use window loacation
-    let pages = {
+    const pages = {
       "": "test",
-      "#login": "login",
       "#settings": "settings",
       "#about": "about",
     };
-    page = pages[window.location.hash];
-    console.log(page, pages);
+    page = pages[window.location.hash as keyof typeof pages];
     if (!page) {
       page = "test";
     }
@@ -40,13 +38,13 @@ export function change(page) {
     about: PageAbout.page,
   };
 
-  const previousPage = pages[ActivePage.get()];
-  const nextPage = pages[page];
+  const previousPage = pages[ActivePage.get() as MonkeyTypes.Page];
+  const nextPage = pages[page as keyof typeof pages];
 
-  ActivePage.set(undefined);
-  $(".page").removeClass("active");
   previousPage?.beforeHide();
   PageTransition.set(true);
+  ActivePage.set(undefined);
+  $(".page").removeClass("active");
   Misc.swapElements(
     previousPage.element,
     nextPage.element,
@@ -56,7 +54,7 @@ export function change(page) {
       ActivePage.set(nextPage.name);
       previousPage?.afterHide();
       nextPage.element.addClass("active");
-      history.pushState(nextPage.pathname, null, nextPage.pathname);
+      history.pushState(nextPage.pathname, "", nextPage.pathname);
       nextPage?.afterShow();
     },
     async () => {
@@ -65,13 +63,13 @@ export function change(page) {
   );
 }
 
-$(document).on("click", "#top .logo", (e) => {
+$(document).on("click", "#top .logo", () => {
   change("test");
 });
 
 $(document).on("click", "#top #menu .icon-button", (e) => {
-  const href = $(e.currentTarget).attr("href");
+  const href = $(e.currentTarget).attr("href") as string;
   ManualRestart.set();
-  change(href.replace("/", "").replace("#", ""));
+  change(href.replace("/", "").replace("#", "") as MonkeyTypes.Page);
   return false;
 });
